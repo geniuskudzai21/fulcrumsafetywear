@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -33,11 +34,13 @@ const CartContext = createContext<CartActions | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
+  const pathname = usePathname();
   const userId = user?.id ?? null;
   const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     if (loading) return;
+    if (pathname === "/admin" || pathname.startsWith("/admin/")) return;
 
     let cancelled = false;
 
@@ -82,7 +85,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [loading, userId]);
+  }, [loading, pathname, userId]);
 
   const addItem = useCallback(
     async (item: CartItem): Promise<CartActionResult> => {

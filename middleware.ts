@@ -36,27 +36,9 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isAdminPath =
-    pathname === "/admin" || pathname.startsWith("/admin/");
   const needsAuth = PROTECTED_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
-
-  if (isAdminPath) {
-    if (!user) {
-      return new NextResponse("Not found", { status: 404 });
-    }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (profile?.role !== "admin") {
-      return new NextResponse("Not found", { status: 404 });
-    }
-  }
 
   if (!user && needsAuth) {
     const loginUrl = request.nextUrl.clone();

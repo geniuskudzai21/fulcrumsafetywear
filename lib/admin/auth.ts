@@ -1,7 +1,8 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export async function requireAdmin() {
+export const requireAdmin = cache(async function requireAdmin() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -18,4 +19,4 @@ export async function requireAdmin() {
   if (profile?.role !== "admin") notFound();
 
   return { supabase, user, profile };
-}
+});

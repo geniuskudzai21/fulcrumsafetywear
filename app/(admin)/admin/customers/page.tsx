@@ -23,7 +23,7 @@ export default async function AdminCustomersPage({
     : 1;
 
   const { data, error } = await supabase.rpc("admin_customers", {
-    p_search: q || undefined,
+    p_search: q,
     p_page: requestedPage,
   });
   const total = data?.[0]?.total_count ?? 0;
@@ -69,7 +69,9 @@ export default async function AdminCustomersPage({
 
       {error ? (
         <p className="mt-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-          Could not load customers: {error.message}
+          {error.code === "PGRST202"
+            ? "Customer pagination is not installed in the connected Supabase database. Run supabase/migrations/005_admin_overview_pagination.sql in its SQL Editor, then refresh."
+            : `Could not load customers: ${error.message}`}
         </p>
       ) : null}
 
