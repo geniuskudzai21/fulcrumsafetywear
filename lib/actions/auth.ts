@@ -51,8 +51,12 @@ function mapAuthError(message: string): string {
     return "Password must be at least 8 characters.";
   }
 
+  if (text.includes("email rate limit") || text.includes("over_email_send_rate_limit")) {
+    return "Supabase has temporarily limited confirmation emails. Check Supabase Dashboard > Authentication > Rate Limits and your SMTP provider's sending limits. If you use Supabase's default email service, configure custom SMTP before retrying.";
+  }
+
   if (text.includes("rate limit") || text.includes("too many")) {
-    return "Too many attempts. Try again in a moment.";
+    return "Supabase Auth has temporarily limited this request. Check Supabase Dashboard > Authentication > Logs for the specific rate limit before retrying.";
   }
 
   return message;
@@ -78,13 +82,30 @@ export async function loginAction(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   });
 
   if (error) {
     return { error: mapAuthError(error.message) };
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    return {
+      error:
+        "You are signed in, but we couldn't verify your account role. Refresh the page and try again.",
+    };
+  }
+
+  if (profile?.role === "admin") {
+    redirect("/admin");
   }
 
   redirect(safeNext(parsed.data.next));

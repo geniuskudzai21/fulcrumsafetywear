@@ -18,6 +18,24 @@ type CartStore = {
   clear: () => void;
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isCartItem(value: unknown): value is CartItem {
+  return (
+    isRecord(value) &&
+    typeof value.variantId === "string" &&
+    typeof value.productSlug === "string" &&
+    typeof value.name === "string" &&
+    typeof value.imageUrl === "string" &&
+    typeof value.color === "string" &&
+    typeof value.size === "string" &&
+    typeof value.price === "number" &&
+    typeof value.qty === "number"
+  );
+}
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set) => ({
@@ -82,6 +100,21 @@ export const useCartStore = create<CartStore>()(
         items: state.items,
         ownerId: state.ownerId,
       }),
+      migrate: (persistedState) => {
+        if (!isRecord(persistedState)) {
+          return { items: [], ownerId: null };
+        }
+
+        return {
+          items: Array.isArray(persistedState.items)
+            ? persistedState.items.filter(isCartItem)
+            : [],
+          ownerId:
+            typeof persistedState.ownerId === "string"
+              ? persistedState.ownerId
+              : null,
+        };
+      },
     },
   ),
 );

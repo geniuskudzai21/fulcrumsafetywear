@@ -86,6 +86,14 @@ export default async function AccountPage() {
             >
               Continue shopping
             </Link>
+            {profile?.role === "admin" ? (
+              <Link
+                href="/admin"
+                className="mt-3 block text-sm font-semibold underline"
+              >
+                Open admin dashboard
+              </Link>
+            ) : null}
           </div>
         </div>
 

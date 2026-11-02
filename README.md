@@ -65,6 +65,10 @@ In **Authentication > Providers > Email**:
   in.
 - Password reset and signup confirmation emails both return through
   `/auth/callback`.
+- Supabase's default email service has strict sending limits. If signup or
+  password-reset emails are rate-limited, check **Authentication > Logs** and
+  **Authentication > Rate Limits**. For reliable production email delivery,
+  configure a custom SMTP provider and review its sending limits.
 
 ## Google Cloud setup
 
