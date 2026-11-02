@@ -1,19 +1,27 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { formatMoney, useCurrencyStore } from "@/lib/money";
 import { cartSubtotal, useCartStore } from "@/lib/store/cart";
+import { useCartActions } from "./CartProvider";
 import { useStore } from "./StoreProvider";
 
 export default function CartDrawer() {
-  const { panel, closeAll, openCheckout } = useStore();
+  const { panel, closeAll, openCheckout, toast } = useStore();
   const items = useCartStore((state) => state.items);
-  const increment = useCartStore((state) => state.increment);
-  const decrement = useCartStore((state) => state.decrement);
-  const remove = useCartStore((state) => state.remove);
+  const { increment, decrement, remove } = useCartActions();
   const currency = useCurrencyStore((state) => state.currency);
   const open = panel === "cart";
+
+  async function update(
+    action: () => Promise<
+      { ok: true } | { ok: false; error: string }
+    >,
+  ) {
+    const result = await action();
+    if (!result.ok) toast(result.error);
+  }
 
   return (
     <aside
@@ -36,7 +44,7 @@ export default function CartDrawer() {
       </div>
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {items.length ? (
-          items.map((item, index) => {
+          items.map((item) => {
             return (
               <div key={item.variantId} className="flex gap-3">
                 <Image
@@ -61,7 +69,7 @@ export default function CartDrawer() {
                     <div className="flex items-center border border-steel rounded">
                       <button
                         type="button"
-                        onClick={() => decrement(index)}
+                        onClick={() => void update(() => decrement(item.variantId))}
                         className="px-2.5 py-1"
                         aria-label="Less"
                       >
@@ -70,7 +78,7 @@ export default function CartDrawer() {
                       <span className="w-7 text-center">{item.qty}</span>
                       <button
                         type="button"
-                        onClick={() => increment(index)}
+                        onClick={() => void update(() => increment(item.variantId))}
                         className="px-2.5 py-1"
                         aria-label="More"
                       >
@@ -83,7 +91,7 @@ export default function CartDrawer() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => remove(index)}
+                    onClick={() => void update(() => remove(item.variantId))}
                     className="mt-1 text-xs underline text-coal/60"
                   >
                     Remove

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, Source_Sans_3 } from "next/font/google";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { CartProvider } from "@/components/CartProvider";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -34,7 +36,9 @@ export default function RootLayout({
       <body
         className={`${archivo.variable} ${sourceSans.variable} bg-white text-coal font-sans antialiased`}
       >
-        {children}
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

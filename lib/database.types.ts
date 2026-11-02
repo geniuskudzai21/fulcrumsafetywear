@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -12,33 +12,35 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.18"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          entity: string
+          entity_id: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           cart_id: string
@@ -289,18 +291,21 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          email: string | null
           full_name: string | null
           id: string
           role: string
         }
         Insert: {
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id: string
           role?: string
         }
         Update: {
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           role?: string
@@ -356,6 +361,62 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_customers: {
+        Args: { p_search?: string }
+        Returns: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          order_count: number
+        }[]
+      }
+      admin_dashboard_stats: {
+        Args: { p_low_stock?: number }
+        Returns: {
+          low_stock_count: number
+          new_customers: number
+          orders_today: number
+          revenue_this_month: number
+        }[]
+      }
+      admin_save_product: {
+        Args: {
+          p_active: boolean
+          p_base_price: number
+          p_category_id: string
+          p_description: string
+          p_image_path: string
+          p_name: string
+          p_product_id: string
+          p_slug: string
+          p_tag: string
+          p_variants: Json
+        }
+        Returns: string
+      }
+      admin_set_order_status: {
+        Args: { p_order_id: string; p_status: string }
+        Returns: {
+          address: string
+          city: string
+          created_at: string
+          currency: string
+          id: string
+          name: string
+          payment_method: string
+          phone: string
+          status: string
+          total: number
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
@@ -485,9 +546,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

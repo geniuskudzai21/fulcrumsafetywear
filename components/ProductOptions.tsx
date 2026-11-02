@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { CatalogColor, CatalogProduct } from "@/lib/queries/products";
 import { formatMoney, useCurrencyStore } from "@/lib/money";
-import { useCartStore } from "@/lib/store/cart";
+import { useCartActions } from "./CartProvider";
 import { useStore } from "./StoreProvider";
 
 export default function ProductOptions({
@@ -12,7 +12,7 @@ export default function ProductOptions({
   product: CatalogProduct;
 }) {
   const { toast, openCart } = useStore();
-  const addItem = useCartStore((state) => state.addItem);
+  const { addItem } = useCartActions();
   const currency = useCurrencyStore((state) => state.currency);
 
   const firstColor =
@@ -52,7 +52,7 @@ export default function ProductOptions({
     setQty(1);
   }
 
-  function addToCart() {
+  async function addToCart() {
     if (!product.inStock) {
       toast("Out of stock");
       return;
@@ -73,7 +73,7 @@ export default function ProductOptions({
       return;
     }
 
-    addItem({
+    const result = await addItem({
       variantId: variant.id,
       productSlug: product.slug,
       name: product.name,
@@ -83,6 +83,12 @@ export default function ProductOptions({
       price: variant.price,
       qty: Math.min(qty, variant.stock),
     });
+
+    if (!result.ok) {
+      toast(result.error);
+      return;
+    }
+
     toast("Added to cart");
     openCart();
   }

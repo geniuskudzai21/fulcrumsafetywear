@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { signOutAction } from "@/lib/actions/auth";
 import { cartCount, useCartStore } from "@/lib/store/cart";
 import { useCurrencyStore, type Currency } from "@/lib/money";
+import { useAuth } from "./auth/AuthProvider";
 import { useStore } from "./StoreProvider";
 
 export default function Header({
@@ -14,6 +16,8 @@ export default function Header({
   initialQuery?: string;
 }) {
   const { openCart } = useStore();
+  const { user } = useAuth();
+  const [accountOpen, setAccountOpen] = useState(false);
   const currency = useCurrencyStore((state) => state.currency);
   const setCurrency = useCurrencyStore((state) => state.setCurrency);
   const items = useCartStore((state) => state.items);
@@ -26,6 +30,23 @@ export default function Header({
   useEffect(() => {
     setQuery(initialQuery);
   }, [initialQuery]);
+
+  useEffect(() => {
+    setAccountOpen(false);
+  }, [pathname]);
+
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined)?.trim() ||
+    user?.email ||
+    "";
+  const initials = displayName.includes("@")
+    ? displayName.slice(0, 2).toUpperCase()
+    : displayName
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() ?? "")
+        .join("");
 
   useEffect(
     () => () => {
@@ -105,6 +126,48 @@ export default function Header({
                 ZiG
               </option>
             </select>
+            {user ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setAccountOpen((open) => !open)}
+                  aria-label="Account menu"
+                  aria-expanded={accountOpen}
+                  className="w-9 h-9 rounded-full bg-gold text-ink text-xs font-bold grid place-items-center hover:brightness-95"
+                >
+                  {initials || "U"}
+                </button>
+                {accountOpen ? (
+                  <div className="absolute right-0 top-11 w-52 bg-white text-coal rounded-lg shadow-xl border border-mist py-2 z-50">
+                    <p className="px-4 py-1 text-xs text-coal/60 truncate">
+                      {user.email}
+                    </p>
+                    <Link
+                      href="/account"
+                      onClick={() => setAccountOpen(false)}
+                      className="block px-4 py-2 text-sm font-semibold hover:bg-mist"
+                    >
+                      Account
+                    </Link>
+                    <form action={signOutAction}>
+                      <button
+                        type="submit"
+                        className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-mist"
+                      >
+                        Log out
+                      </button>
+                    </form>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm font-semibold hover:text-gold"
+              >
+                Log in
+              </Link>
+            )}
             <button
               id="openCart"
               onClick={openCart}

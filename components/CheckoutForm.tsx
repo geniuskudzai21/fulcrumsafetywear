@@ -4,17 +4,18 @@ import type { FormEvent } from "react";
 import { formatMoney, useCurrencyStore } from "@/lib/money";
 import { WHATSAPP_NUMBER } from "@/lib/site";
 import { cartSubtotal, useCartStore } from "@/lib/store/cart";
+import { useCartActions } from "./CartProvider";
 import { useStore } from "./StoreProvider";
 
 export default function CheckoutForm() {
   const { panel, closeAll, toast } = useStore();
   const items = useCartStore((state) => state.items);
-  const clear = useCartStore((state) => state.clear);
+  const { clear } = useCartActions();
   const currency = useCurrencyStore((state) => state.currency);
 
   if (panel !== "checkout") return null;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -42,7 +43,7 @@ export default function CheckoutForm() {
       "_blank",
     );
 
-    clear();
+    await clear();
     closeAll();
     form.reset();
     toast("Order sent. We will confirm on WhatsApp.");

@@ -2,12 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CartDrawer from "@/components/CartDrawer";
-import CheckoutForm from "@/components/CheckoutForm";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import ProductOptions from "@/components/ProductOptions";
-import { StoreProvider } from "@/components/StoreProvider";
+import ShopShell from "@/components/ShopShell";
 import { getProductBySlug, getProductSlugs } from "@/lib/queries/products";
 import { SITE_URL } from "@/lib/site";
 
@@ -85,9 +81,8 @@ export default async function ProductPage({ params }: Props) {
   };
 
   return (
-    <StoreProvider>
-      <Header />
-      <main className="max-w-7xl mx-auto px-4 py-8">
+    <ShopShell>
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <nav className="text-sm text-coal/60" aria-label="Breadcrumb">
           <Link href="/" className="hover:underline">
             Home
@@ -147,16 +142,13 @@ export default async function ProductPage({ params }: Props) {
         >
           Back to all workwear
         </Link>
-      </main>
-      <Footer />
-      <CartDrawer />
-      <CheckoutForm />
+      </div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
-    </StoreProvider>
+    </ShopShell>
   );
 }

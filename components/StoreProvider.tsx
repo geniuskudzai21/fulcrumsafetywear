@@ -9,7 +9,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useCartStore } from "@/lib/store/cart";
 
 type Panel = "cart" | "quickview" | "checkout" | null;
 
@@ -31,10 +30,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
   const toastTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    useCartStore.persist.rehydrate();
-  }, []);
 
   const closeAll = useCallback(() => {
     setPanel(null);
