@@ -8,7 +8,7 @@ import { useCartActions } from "./CartProvider";
 import { useStore } from "./StoreProvider";
 
 export default function CartDrawer() {
-  const { panel, closeAll, openCheckout, toast } = useStore();
+  const { panel, closeAll, toast } = useStore();
   const items = useCartStore((state) => state.items);
   const { increment, decrement, remove } = useCartActions();
   const currency = useCurrencyStore((state) => state.currency);
@@ -117,14 +117,23 @@ export default function CartDrawer() {
         <p className="text-xs text-coal/60 mt-1">
           Delivery fee is confirmed at checkout by city.
         </p>
-        <button
-          type="button"
-          onClick={openCheckout}
-          disabled={!items.length}
-          className="mt-4 w-full bg-ink text-gold font-bold py-3 rounded disabled:opacity-40"
-        >
-          Checkout
-        </button>
+        {items.length ? (
+          <Link
+            href="/checkout"
+            onClick={closeAll}
+            className="mt-4 block w-full rounded bg-ink py-3 text-center font-bold text-gold"
+          >
+            Checkout
+          </Link>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="mt-4 w-full rounded bg-ink py-3 font-bold text-gold opacity-40"
+          >
+            Checkout
+          </button>
+        )}
       </div>
     </aside>
   );

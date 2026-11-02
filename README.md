@@ -30,10 +30,15 @@ accounts, and a cart that syncs across devices.
    The auth and cart features only use the anon key plus the signed-in user's
    cookies.
 
-3. Apply the SQL migrations in `supabase/migrations/` to your database. Run
-   them in order: `001_schema.sql`, `002_rls.sql`, then `003_cart_unique.sql`.
+3. Apply the SQL migrations in `supabase/migrations/` to your database in
+   numeric order, through `005_admin_overview_pagination.sql`.
 
-4. Start the app:
+4. Create your first customer account, then replace `you@example.com` in
+   `supabase/make_admin.sql` with that account's email and run the script in the
+   Supabase SQL editor. This grants access to `/admin`; the admin dashboard and
+   customer list show all registered customer accounts, with pagination.
+
+5. Start the app:
 
    ```bash
    npm run dev
@@ -74,8 +79,8 @@ In **Authentication > Providers > Email**:
 
 ## Testing the auth and cart flow
 
-1. Visit `/account` or `/checkout` while signed out. You should be redirected
-   to `/login?next=...`.
+1. Visit `/account` or `/checkout` while signed out, or press Checkout in the
+   cart. You should be redirected to `/login?next=...`.
 2. Sign up at `/signup`. With email confirmation enabled, you should see the
    "Check your email" message. Confirm the email, then sign in.
 3. Add items to the cart while signed out. Sign in. The guest cart is merged

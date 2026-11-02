@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { formatAdminDate } from "@/lib/admin/format";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+const CUSTOMERS_PAGE_SIZE = 50;
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -16,17 +17,33 @@ export default async function AdminCustomersPage({
   const { supabase } = await requireAdmin();
   const params = await searchParams;
   const q = first(params.q)?.trim() ?? "";
+  const parsedPage = Number(first(params.page) ?? "1");
+  const requestedPage = Number.isFinite(parsedPage)
+    ? Math.min(Math.max(1, Math.floor(parsedPage)), 2_147_483_647)
+    : 1;
 
   const { data, error } = await supabase.rpc("admin_customers", {
     p_search: q || undefined,
+    p_page: requestedPage,
   });
+  const total = data?.[0]?.total_count ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / CUSTOMERS_PAGE_SIZE));
+  const page = data?.[0]?.page_number ?? 1;
+
+  function pageHref(nextPage: number) {
+    const search = new URLSearchParams();
+    if (q) search.set("q", q);
+    if (nextPage > 1) search.set("page", String(nextPage));
+    const value = search.toString();
+    return value ? `/admin/customers?${value}` : "/admin/customers";
+  }
 
   return (
     <div>
       <div>
         <h1 className="d text-2xl sm:text-3xl">Customers</h1>
         <p className="mt-1 text-sm text-coal/60">
-          Read-only customer accounts and order counts.
+          {total} customer account{total === 1 ? "" : "s"}.
         </p>
       </div>
 
@@ -95,8 +112,33 @@ export default async function AdminCustomersPage({
         </table>
       </div>
 
+      <div className="mt-4 flex items-center justify-between gap-3 text-sm">
+        <p className="text-coal/55">
+          Page {page} of {pageCount}
+        </p>
+        <div className="flex gap-2">
+          <Link
+            href={pageHref(page - 1)}
+            aria-disabled={page <= 1}
+            className={`rounded border border-steel bg-white px-3 py-1.5 font-semibold ${
+              page <= 1 ? "pointer-events-none opacity-40" : ""
+            }`}
+          >
+            Previous
+          </Link>
+          <Link
+            href={pageHref(page + 1)}
+            aria-disabled={page >= pageCount}
+            className={`rounded border border-steel bg-white px-3 py-1.5 font-semibold ${
+              page >= pageCount ? "pointer-events-none opacity-40" : ""
+            }`}
+          >
+            Next
+          </Link>
+        </div>
+      </div>
       <p className="mt-3 text-xs text-coal/50">
-        Showing up to 200 customers. Guest orders are not counted here.
+        Guest orders are not associated with a customer account.
       </p>
     </div>
   );

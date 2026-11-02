@@ -362,13 +362,15 @@ export type Database = {
     }
     Functions: {
       admin_customers: {
-        Args: { p_search?: string }
+        Args: { p_page?: number; p_search?: string }
         Returns: {
           created_at: string
           email: string
           full_name: string
           id: string
           order_count: number
+          page_number: number
+          total_count: number
         }[]
       }
       admin_dashboard_stats: {
@@ -378,6 +380,8 @@ export type Database = {
           new_customers: number
           orders_today: number
           revenue_this_month: number
+          total_customers: number
+          total_orders: number
         }[]
       }
       admin_save_product: {

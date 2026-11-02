@@ -61,6 +61,18 @@ export default async function AdminDashboardPage() {
       detail: "Profiles created this month",
       href: "/admin/customers",
     },
+    {
+      label: "Total customers",
+      value: summary?.total_customers ?? 0,
+      detail: "Registered customer accounts",
+      href: "/admin/customers",
+    },
+    {
+      label: "All orders",
+      value: summary?.total_orders ?? 0,
+      detail: "Orders across all statuses",
+      href: "/admin/orders",
+    },
   ];
 
   return (
@@ -86,7 +98,7 @@ export default async function AdminDashboardPage() {
         </p>
       ) : null}
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {cards.map((card) => (
           <Link
             key={card.label}
