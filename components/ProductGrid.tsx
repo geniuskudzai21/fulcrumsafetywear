@@ -24,9 +24,14 @@ export default function ProductGrid({
   sort,
 }: Props) {
   return (
-    <section id="shop" className="max-w-7xl mx-auto px-4 py-12">
+    <section
+      id="shop"
+      className="scroll-mt-32 px-4 py-12 max-w-7xl mx-auto md:scroll-mt-24"
+    >
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <h2 className="d text-3xl">Shop workwear</h2>
+        <h2 className="d text-3xl">
+          {q ? `Results for "${q}"` : "Shop workwear"}
+        </h2>
         <SortSelect sort={sort} category={category} q={q || undefined} />
       </div>
       <CategoryChips
@@ -35,8 +40,9 @@ export default function ProductGrid({
         q={q || undefined}
         sort={sort}
       />
-      <p id="results" className="mt-4 text-sm text-coal/60">
-        {products.length + (products.length === 1 ? " product" : " products")}
+      <p id="results" className="mt-4 text-sm text-coal/60" aria-live="polite">
+        {products.length} {products.length === 1 ? "product" : "products"}
+        {q ? ` found for "${q}"` : ""}
       </p>
       {products.length > 0 ? (
         <div

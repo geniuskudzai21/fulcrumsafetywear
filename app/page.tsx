@@ -44,13 +44,18 @@ export default async function Home({
     requestedCategory && category === "All"
       ? await getProducts({ q: q || undefined, sort })
       : requestedProducts;
+  const isSearching = q.length > 0;
 
   return (
     <StoreProvider>
       <Header initialQuery={q} />
       <main id="top">
-        <Hero />
-        <TrustStrip />
+        {!isSearching ? (
+          <>
+            <Hero />
+            <TrustStrip />
+          </>
+        ) : null}
         <ProductGrid
           products={products}
           categories={categories}
@@ -58,7 +63,7 @@ export default async function Home({
           q={q}
           sort={sort}
         />
-        <BrandBand />
+        {!isSearching ? <BrandBand /> : null}
       </main>
       <Footer />
       <CartDrawer />

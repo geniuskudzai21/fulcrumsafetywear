@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { signOutAction } from "@/lib/actions/auth";
 import { cartCount, useCartStore } from "@/lib/store/cart";
-import { useCurrencyStore, type Currency } from "@/lib/money";
 import { useAuth } from "./auth/AuthProvider";
 import { useStore } from "./StoreProvider";
 
@@ -15,43 +14,72 @@ function SearchBar({
   query,
   onChange,
   onSubmit,
+  onClear,
+  onFocus,
+  onBlur,
   className = "",
 }: {
   id: string;
   query: string;
   onChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onClear: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
   className?: string;
 }) {
   return (
     <form
       role="search"
       onSubmit={onSubmit}
-      className={`flex h-11 min-w-0 overflow-hidden rounded-lg bg-white text-coal ring-2 ring-transparent transition focus-within:ring-gold ${className}`}
+      className={`flex h-9 min-w-0 items-center overflow-hidden rounded-full bg-white pl-4 pr-1 text-coal ring-2 ring-transparent transition focus-within:ring-gold ${className}`}
     >
       <label htmlFor={id} className="sr-only">
         Search products
       </label>
       <input
         id={id}
-        type="search"
+        type="text"
         value={query}
         onChange={(event) => onChange(event.target.value)}
-        placeholder="Search Fulcrum Wear"
+        onFocus={onFocus}
+        onBlur={onBlur}
+        placeholder="Search workwear, hi-vis, PPE"
         autoComplete="off"
-        className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-coal/45"
+        enterKeyHint="search"
+        className="min-w-0 flex-1 appearance-none bg-transparent text-sm outline-none focus-visible:outline-none placeholder:text-coal/40"
       />
+      {query ? (
+        <button
+          type="button"
+          onClick={onClear}
+          aria-label="Clear search"
+          className="ml-1 grid h-7 w-7 shrink-0 place-items-center rounded-full text-coal/40 transition-colors hover:bg-mist hover:text-coal"
+        >
+          <svg
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.2}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      ) : null}
       <button
         type="submit"
         aria-label="Search"
-        className="grid w-12 shrink-0 place-items-center bg-gold text-ink transition-colors hover:bg-[#f5b91a]"
+        className="ml-1 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gold text-ink transition hover:brightness-95"
       >
         <svg
-          width="20"
-          height="20"
+          width="15"
+          height="15"
           fill="none"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={2.2}
           viewBox="0 0 24 24"
           aria-hidden="true"
         >
@@ -71,17 +99,16 @@ export default function Header({
   const { openCart } = useStore();
   const { user } = useAuth();
   const [accountOpen, setAccountOpen] = useState(false);
-  const currency = useCurrencyStore((state) => state.currency);
-  const setCurrency = useCurrencyStore((state) => state.setCurrency);
   const items = useCartStore((state) => state.items);
   const count = cartCount(items);
   const pathname = usePathname();
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchFocused = useRef(false);
 
   useEffect(() => {
-    setQuery(initialQuery);
+    if (!searchFocused.current) setQuery(initialQuery);
   }, [initialQuery]);
 
   useEffect(() => {
@@ -108,58 +135,60 @@ export default function Header({
     [],
   );
 
+  function navigateSearch(term: string, mode: "push" | "replace" = "push") {
+    const params = new URLSearchParams();
+    if (term) params.set("q", term);
+    const search = params.toString();
+    const url = search ? `/?${search}#shop` : "/";
+
+    if (mode === "replace" && pathname === "/") {
+      router.replace(url);
+    } else {
+      router.push(url);
+    }
+  }
+
   function handleSearch(value: string) {
     setQuery(value);
 
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
     searchTimeout.current = setTimeout(() => {
-      navigateSearch(value.trim());
-    }, 300);
-  }
-
-  function navigateSearch(term: string) {
-    if (pathname === "/") {
-      const params = new URLSearchParams(window.location.search);
-
-      if (term) {
-        params.set("q", term);
-      } else {
-        params.delete("q");
-      }
-
-      const search = params.toString();
-      router.replace(search ? `/?${search}` : "/", { scroll: false });
-      return;
-    }
-
-    const params = new URLSearchParams();
-    if (term) params.set("q", term);
-    const search = params.toString();
-    router.push(search ? `/?${search}#shop` : "/#shop");
+      navigateSearch(value.trim(), "replace");
+    }, 350);
   }
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
     navigateSearch(query.trim());
+  }
+
+  function clearSearch() {
+    setQuery("");
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    navigateSearch("");
   }
 
   return (
     <>
-      <div className="bg-gold text-ink text-sm font-semibold text-center py-2 px-3">
-        Delivery across Zimbabwe. Pay with EcoCash, card or cash on delivery.
+      <div className="bg-gold text-ink">
+        <p className="mx-auto max-w-7xl px-4 py-1.5 text-center text-[11px] font-semibold tracking-wide sm:text-xs">
+          Delivery across Zimbabwe &middot; Pay with EcoCash, card or cash on
+          delivery
+        </p>
       </div>
 
-      <header className="sticky top-0 z-30 bg-ink text-white">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4">
-          <Link href="/" aria-label="Fulcrum Wear home">
+      <header className="sticky top-0 z-30 bg-ink/95 text-white shadow-sm backdrop-blur">
+        <div className="mx-auto grid h-14 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4">
+          <Link href="/" aria-label="Fulcrum Wear home" className="shrink-0">
             <Image
               src="/images/logo2.jpeg"
               alt="Fulcrum Safety Wear"
               width={1280}
               height={853}
-              className="h-12 w-auto"
+              className="h-9 w-auto"
             />
           </Link>
           <SearchBar
@@ -167,25 +196,16 @@ export default function Header({
             query={query}
             onChange={handleSearch}
             onSubmit={submitSearch}
-            className="hidden md:flex flex-1 max-w-2xl"
+            onClear={clearSearch}
+            onFocus={() => {
+              searchFocused.current = true;
+            }}
+            onBlur={() => {
+              searchFocused.current = false;
+            }}
+            className="hidden w-full max-w-xl justify-self-center md:flex"
           />
-          <div className="ml-auto flex items-center gap-3">
-            <select
-              id="cur"
-              aria-label="Currency"
-              value={currency}
-              onChange={(event) =>
-                setCurrency(event.target.value as Currency)
-              }
-              className="bg-white/10 rounded px-2 py-1.5 text-sm"
-            >
-              <option className="text-black" value="USD">
-                USD
-              </option>
-              <option className="text-black" value="ZWG">
-                ZiG
-              </option>
-            </select>
+          <div className="flex items-center gap-1.5 sm:gap-2.5 justify-self-end">
             {user ? (
               <div className="relative">
                 <button
@@ -193,13 +213,13 @@ export default function Header({
                   onClick={() => setAccountOpen((open) => !open)}
                   aria-label="Account menu"
                   aria-expanded={accountOpen}
-                  className="w-9 h-9 rounded-full bg-gold text-ink text-xs font-bold grid place-items-center hover:brightness-95"
+                  className="grid h-8 w-8 place-items-center rounded-full bg-gold text-[11px] font-bold text-ink transition hover:brightness-95"
                 >
                   {initials || "U"}
                 </button>
                 {accountOpen ? (
-                  <div className="absolute right-0 top-11 w-52 bg-white text-coal rounded-lg shadow-xl border border-mist py-2 z-50">
-                    <p className="px-4 py-1 text-xs text-coal/60 truncate">
+                  <div className="absolute right-0 top-10 w-52 rounded-lg border border-mist bg-white py-2 text-coal shadow-xl z-50">
+                    <p className="truncate px-4 py-1 text-xs text-coal/60">
                       {user.email}
                     </p>
                     <Link
@@ -212,7 +232,7 @@ export default function Header({
                     <form action={signOutAction}>
                       <button
                         type="submit"
-                        className="w-full text-left px-4 py-2 text-sm font-semibold hover:bg-mist"
+                        className="w-full px-4 py-2 text-left text-sm font-semibold hover:bg-mist"
                       >
                         Log out
                       </button>
@@ -223,7 +243,7 @@ export default function Header({
             ) : (
               <Link
                 href="/login"
-                className="text-sm font-semibold hover:text-gold"
+                className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold transition-colors hover:border-gold hover:text-gold"
               >
                 Log in
               </Link>
@@ -231,12 +251,12 @@ export default function Header({
             <button
               id="openCart"
               onClick={openCart}
-              className="relative p-2 rounded hover:bg-white/10"
+              className="relative grid h-9 w-9 place-items-center rounded-full transition-colors hover:bg-white/10"
               aria-label="Open cart"
             >
               <svg
-                width="24"
-                height="24"
+                width="21"
+                height="21"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -244,21 +264,30 @@ export default function Header({
               >
                 <path d="M6 6h15l-2 9H8L6 6zm0 0L5 3H2M9 20a1 1 0 100-2 1 1 0 000 2zm9 0a1 1 0 100-2 1 1 0 000 2z" />
               </svg>
-              <span
-                id="count"
-                className="absolute -top-0.5 -right-0.5 bg-gold text-ink text-xs font-bold rounded-full min-w-5 h-5 grid place-items-center px-1"
-              >
-                {count}
-              </span>
+              {count > 0 ? (
+                <span
+                  id="count"
+                  className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-gold px-1 text-[10px] font-bold text-ink"
+                >
+                  {count}
+                </span>
+              ) : null}
             </button>
           </div>
         </div>
-        <div className="md:hidden px-4 pb-3">
+        <div className="px-4 pb-2.5 md:hidden">
           <SearchBar
             id="q2"
             query={query}
             onChange={handleSearch}
             onSubmit={submitSearch}
+            onClear={clearSearch}
+            onFocus={() => {
+              searchFocused.current = true;
+            }}
+            onBlur={() => {
+              searchFocused.current = false;
+            }}
             className="w-full"
           />
         </div>
