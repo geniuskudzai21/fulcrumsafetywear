@@ -3,12 +3,65 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { signOutAction } from "@/lib/actions/auth";
 import { cartCount, useCartStore } from "@/lib/store/cart";
 import { useCurrencyStore, type Currency } from "@/lib/money";
 import { useAuth } from "./auth/AuthProvider";
 import { useStore } from "./StoreProvider";
+
+function SearchBar({
+  id,
+  query,
+  onChange,
+  onSubmit,
+  className = "",
+}: {
+  id: string;
+  query: string;
+  onChange: (value: string) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  className?: string;
+}) {
+  return (
+    <form
+      role="search"
+      onSubmit={onSubmit}
+      className={`flex h-11 min-w-0 overflow-hidden rounded-lg bg-white text-coal ring-2 ring-transparent transition focus-within:ring-gold ${className}`}
+    >
+      <label htmlFor={id} className="sr-only">
+        Search products
+      </label>
+      <input
+        id={id}
+        type="search"
+        value={query}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="Search Fulcrum Wear"
+        autoComplete="off"
+        className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-coal/45"
+      />
+      <button
+        type="submit"
+        aria-label="Search"
+        className="grid w-12 shrink-0 place-items-center bg-gold text-ink transition-colors hover:bg-[#f5b91a]"
+      >
+        <svg
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle cx="10.8" cy="10.8" r="6.8" />
+          <path d="m16 16 4.5 4.5" />
+        </svg>
+      </button>
+    </form>
+  );
+}
 
 export default function Header({
   initialQuery = "",
@@ -61,27 +114,35 @@ export default function Header({
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
     searchTimeout.current = setTimeout(() => {
-      const term = value.trim();
+      navigateSearch(value.trim());
+    }, 300);
+  }
 
-      if (pathname === "/") {
-        const params = new URLSearchParams(window.location.search);
+  function navigateSearch(term: string) {
+    if (pathname === "/") {
+      const params = new URLSearchParams(window.location.search);
 
-        if (term) {
-          params.set("q", term);
-        } else {
-          params.delete("q");
-        }
-
-        const search = params.toString();
-        router.replace(search ? `/?${search}` : "/", { scroll: false });
-        return;
+      if (term) {
+        params.set("q", term);
+      } else {
+        params.delete("q");
       }
 
-      const params = new URLSearchParams();
-      if (term) params.set("q", term);
       const search = params.toString();
-      router.push(search ? `/?${search}#shop` : "/#shop");
-    }, 300);
+      router.replace(search ? `/?${search}` : "/", { scroll: false });
+      return;
+    }
+
+    const params = new URLSearchParams();
+    if (term) params.set("q", term);
+    const search = params.toString();
+    router.push(search ? `/?${search}#shop` : "/#shop");
+  }
+
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    navigateSearch(query.trim());
   }
 
   return (
@@ -101,13 +162,12 @@ export default function Header({
               className="h-12 w-auto"
             />
           </Link>
-          <input
+          <SearchBar
             id="q"
-            type="search"
-            value={query}
-            onChange={(event) => handleSearch(event.target.value)}
-            placeholder="Search shirts, trousers, hi-vis"
-            className="hidden md:block flex-1 max-w-lg rounded-full bg-white/10 px-5 py-2 text-sm placeholder-white/50 outline-none focus:ring-2 ring-gold"
+            query={query}
+            onChange={handleSearch}
+            onSubmit={submitSearch}
+            className="hidden md:flex flex-1 max-w-2xl"
           />
           <div className="ml-auto flex items-center gap-3">
             <select
@@ -194,13 +254,12 @@ export default function Header({
           </div>
         </div>
         <div className="md:hidden px-4 pb-3">
-          <input
+          <SearchBar
             id="q2"
-            type="search"
-            value={query}
-            onChange={(event) => handleSearch(event.target.value)}
-            placeholder="Search products"
-            className="w-full rounded-full bg-white/10 px-5 py-2 text-sm placeholder-white/50 outline-none focus:ring-2 ring-gold"
+            query={query}
+            onChange={handleSearch}
+            onSubmit={submitSearch}
+            className="w-full"
           />
         </div>
         <div className="tape"></div>

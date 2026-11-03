@@ -33,12 +33,17 @@ accounts, and a cart that syncs across devices.
 3. Apply the SQL migrations in `supabase/migrations/` to your database in
    numeric order, through `005_admin_overview_pagination.sql`.
 
-4. Create your first customer account, then replace `you@example.com` in
+4. To preview the storefront with sample products, run `supabase/seed.sql` in
+   the Supabase SQL Editor. To preview the admin orders dashboard, optionally
+   run `supabase/seed_admin_orders.sql` after the product seed. The order seed
+   creates clearly fake orders; do not use it in production.
+
+5. Create your first customer account, then replace `you@example.com` in
    `supabase/make_admin.sql` with that account's email and run the script in the
    Supabase SQL editor. This grants access to `/admin`; the admin dashboard and
    customer list show all registered customer accounts, with pagination.
 
-5. Start the app:
+6. Start the app:
 
    ```bash
    npm run dev

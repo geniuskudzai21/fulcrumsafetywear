@@ -127,9 +127,11 @@ export default async function AdminProductsPage({
                 const imageUrl = product.image_path
                   ? /^https?:\/\//.test(product.image_path)
                     ? product.image_path
-                    : supabase.storage
-                        .from("products")
-                        .getPublicUrl(product.image_path).data.publicUrl
+                    : product.image_path.startsWith("/")
+                      ? product.image_path
+                      : supabase.storage
+                          .from("products")
+                          .getPublicUrl(product.image_path).data.publicUrl
                   : "/images/logo2.jpeg";
 
                 return (

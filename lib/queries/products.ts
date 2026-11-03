@@ -138,8 +138,10 @@ function mapProduct(
     imageUrl: imagePath
       ? /^https?:\/\//.test(imagePath)
         ? imagePath
-        : supabase.storage.from("products").getPublicUrl(imagePath).data
-            .publicUrl
+        : imagePath.startsWith("/")
+          ? imagePath
+          : supabase.storage.from("products").getPublicUrl(imagePath).data
+              .publicUrl
       : "/images/logo2.jpeg",
     tag: row.tag,
     colors: colorList,
