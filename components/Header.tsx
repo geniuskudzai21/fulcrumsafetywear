@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import fulcrumLogo from "@/images/logo.png";
 import { signOutAction } from "@/lib/actions/auth";
 import { cartCount, useCartStore } from "@/lib/store/cart";
 import { useAuth } from "./auth/AuthProvider";
@@ -184,11 +185,10 @@ export default function Header({
         <div className="mx-auto grid h-14 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4">
           <Link href="/" aria-label="Fulcrum Wear home" className="shrink-0">
             <Image
-              src="/images/logo2.jpeg"
+              src={fulcrumLogo}
               alt="Fulcrum Safety Wear"
-              width={1280}
-              height={853}
-              className="h-9 w-auto"
+              priority
+              className="h-11 w-[68px] object-contain sm:w-[78px]"
             />
           </Link>
           <SearchBar

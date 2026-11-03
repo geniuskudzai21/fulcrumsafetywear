@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import Footer from "@/components/Footer";
+import fulcrumLogo from "@/images/logo.png";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -10,11 +11,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <Link href="/" aria-label="Fulcrum Wear home">
             <Image
-              src="/images/logo2.jpeg"
+              src={fulcrumLogo}
               alt="Fulcrum Safety Wear"
-              width={1280}
-              height={853}
-              className="h-12 w-auto"
+              className="h-12 w-[80px] object-contain"
             />
           </Link>
           <Link href="/" className="text-sm font-semibold hover:text-gold">

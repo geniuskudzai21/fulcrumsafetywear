@@ -1,4 +1,5 @@
 import Image from "next/image";
+import fulcrumLogo from "@/images/logo.png";
 
 export default function Footer() {
   return (
@@ -7,11 +8,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-10 grid sm:grid-cols-3 gap-8">
         <div>
           <Image
-            src="/images/logo2.jpeg"
-            alt=""
-            width={1280}
-            height={853}
-            className="h-14 w-auto"
+            src={fulcrumLogo}
+            alt="Fulcrum Safety Wear"
+            className="h-16 w-[96px] object-contain"
           />
           <p className="mt-3">
             Industrial workwear and PPE, delivered across Zimbabwe.

@@ -5,6 +5,7 @@ import AdminNav from "@/components/admin/AdminNav";
 import { StoreProvider } from "@/components/StoreProvider";
 import { signOutAction } from "@/lib/actions/auth";
 import { requireAdmin } from "@/lib/admin/auth";
+import fulcrumLogo from "@/images/logo.png";
 
 export const metadata: Metadata = {
   title: "Admin | Fulcrum Wear",
@@ -25,11 +26,9 @@ export default async function AdminLayout({
           <div className="px-4 py-4 lg:px-5 lg:py-5">
             <Link href="/admin" aria-label="Admin dashboard">
               <Image
-                src="/images/logo2.jpeg"
+                src={fulcrumLogo}
                 alt="Fulcrum Safety Wear"
-                width={1280}
-                height={853}
-                className="h-11 w-auto"
+                className="h-11 w-[74px] object-contain"
               />
             </Link>
             <p className="mt-2 text-xs font-bold uppercase tracking-widest text-gold">
