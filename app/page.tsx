@@ -26,17 +26,24 @@ export default async function Home({
   searchParams: SearchParams;
 }) {
   const params = await searchParams;
-  const categories = await getCategories();
   const requestedCategory = first(params.category);
-  const category =
-    categories.find((item) => item.slug === requestedCategory)?.slug ?? "All";
   const q = first(params.q)?.trim() ?? "";
   const sort = parseSort(first(params.sort));
-  const products = await getProducts({
-    category: category === "All" ? undefined : category,
-    q: q || undefined,
-    sort,
-  });
+  const [categories, requestedProducts] = await Promise.all([
+    getCategories(),
+    getProducts({
+      category: requestedCategory,
+      q: q || undefined,
+      sort,
+    }),
+  ]);
+  const category = categories.some((item) => item.slug === requestedCategory)
+    ? requestedCategory!
+    : "All";
+  const products =
+    requestedCategory && category === "All"
+      ? await getProducts({ q: q || undefined, sort })
+      : requestedProducts;
 
   return (
     <StoreProvider>

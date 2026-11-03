@@ -26,9 +26,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getSession().then(({ data, error }) => {
       if (!mounted) return;
-      setUser(data.user);
+      if (error) {
+        console.error("Failed to load Supabase session", error);
+      }
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    }).catch((error: unknown) => {
+      if (!mounted) return;
+      console.error("Failed to load Supabase session", error);
+      setUser(null);
       setLoading(false);
     });
 

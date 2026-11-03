@@ -86,8 +86,10 @@ function sortSizes<T extends { size: string }>(sizes: T[]) {
   return [...sizes].sort((a, b) => sizeRank(a.size) - sizeRank(b.size));
 }
 
-function mapProduct(row: RawProduct): CatalogProduct {
-  const supabase = createPublicClient();
+function mapProduct(
+  row: RawProduct,
+  supabase: ReturnType<typeof createPublicClient>,
+): CatalogProduct {
   const colors = new Map<string, CatalogColor>();
   const allSizes = new Set<string>();
   let totalStock = 0;
@@ -184,7 +186,7 @@ export async function getProducts(
     throw new Error(`Failed to load products: ${error.message}`);
   }
 
-  return (data ?? []).map(mapProduct);
+  return (data ?? []).map((row) => mapProduct(row, supabase));
 }
 
 export async function getProductBySlug(
@@ -202,7 +204,7 @@ export async function getProductBySlug(
     throw new Error(`Failed to load product "${slug}": ${error.message}`);
   }
 
-  return data ? mapProduct(data as unknown as RawProduct) : null;
+  return data ? mapProduct(data as unknown as RawProduct, supabase) : null;
 }
 
 export async function getProductSlugs(): Promise<string[]> {

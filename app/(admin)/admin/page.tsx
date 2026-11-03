@@ -165,7 +165,7 @@ export default async function AdminDashboardPage() {
               ) : (
                 <tr>
                   <td colSpan={6} className="px-4 py-10 text-center text-coal/60">
-                    No orders yet. Seed orders or place a test order.
+                    No orders yet. Orders will appear here after customers place them.
                   </td>
                 </tr>
               )}
