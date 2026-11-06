@@ -3,7 +3,7 @@ export default function Loading() {
     <div className="animate-pulse">
       <div className="h-9 bg-ink/10" />
       <div className="h-16 bg-ink" />
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-7xl 2xl:max-w-[90rem] mx-auto px-4 py-12">
         <div className="h-10 w-64 bg-mist rounded" />
         <div className="mt-5 flex gap-2">
           {Array.from({ length: 5 }).map((_, index) => (

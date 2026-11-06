@@ -6,7 +6,7 @@ export default function BrandBand() {
   return (
     <section className="relative isolate overflow-hidden bg-coal text-white">
       <div className="pointer-events-none absolute -left-40 -top-40 -z-10 h-96 w-96 rounded-full bg-gold/10 blur-3xl" />
-      <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
+      <div className="mx-auto grid max-w-7xl 2xl:max-w-[90rem] items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-gold">
             <span className="h-1.5 w-1.5 rounded-full bg-gold" />

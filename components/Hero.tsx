@@ -69,7 +69,7 @@ export default function Hero() {
       }}
     >
       <div className="hero-glow pointer-events-none absolute -right-36 -top-48 -z-10 h-[34rem] w-[34rem] rounded-full bg-gold/15 blur-3xl" />
-      <div className="mx-auto grid max-w-7xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 sm:py-5 md:min-h-[430px] md:grid-cols-[1fr_0.88fr] md:gap-8 md:py-7 lg:min-h-[465px] lg:gap-10 lg:px-8">
+      <div className="mx-auto grid max-w-7xl 2xl:max-w-[90rem] items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 sm:py-5 md:min-h-[430px] md:grid-cols-[1fr_0.88fr] md:gap-8 md:py-7 lg:min-h-[465px] lg:gap-10 lg:px-8">
         <div className="relative z-10 py-2 md:py-3">
           <div className="flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-gold sm:text-sm">
             <span className="h-px w-8 bg-gold" />

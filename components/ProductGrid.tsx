@@ -26,7 +26,7 @@ export default function ProductGrid({
   return (
     <section
       id="shop"
-      className="scroll-mt-32 px-4 py-12 max-w-7xl mx-auto md:scroll-mt-24"
+      className="scroll-mt-32 px-4 py-12 max-w-7xl 2xl:max-w-[90rem] mx-auto md:scroll-mt-24"
     >
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h2 className="d text-3xl">

@@ -285,3 +285,9 @@
   outline: 2px solid #fcc419;
   outline-offset: 2px;
 }
+
+@media (min-width: 1536px) {
+  html {
+    font-size: clamp(16px, 1.05vw, 26px);
+  }
+}

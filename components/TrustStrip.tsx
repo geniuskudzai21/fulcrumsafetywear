@@ -48,7 +48,7 @@ const benefits = [
 export default function TrustStrip() {
   return (
     <section className="border-b border-mist bg-white">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 py-5 sm:grid-cols-2 sm:px-6 md:grid-cols-4 md:gap-4 md:py-7 lg:px-8">
+      <div className="mx-auto grid max-w-7xl 2xl:max-w-[90rem] grid-cols-1 gap-3 px-4 py-5 sm:grid-cols-2 sm:px-6 md:grid-cols-4 md:gap-4 md:py-7 lg:px-8">
         {benefits.map((benefit) => (
           <div
             key={benefit.title}

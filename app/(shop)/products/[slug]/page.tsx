@@ -82,7 +82,7 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <ShopShell>
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl 2xl:max-w-[90rem] mx-auto px-4 py-8">
         <nav className="text-sm text-coal/60" aria-label="Breadcrumb">
           <Link href="/" className="hover:underline">
             Home

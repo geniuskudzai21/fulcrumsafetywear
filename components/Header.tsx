@@ -175,14 +175,14 @@ export default function Header({
   return (
     <>
       <div className="bg-gold text-ink">
-        <p className="mx-auto max-w-7xl px-4 py-1.5 text-center text-[11px] font-semibold tracking-wide sm:text-xs">
+        <p className="mx-auto max-w-7xl 2xl:max-w-[90rem] px-4 py-1.5 text-center text-[11px] font-semibold tracking-wide sm:text-xs">
           Delivery across Zimbabwe &middot; Pay with EcoCash, card or cash on
           delivery
         </p>
       </div>
 
       <header className="sticky top-0 z-30 bg-ink/95 text-white shadow-sm backdrop-blur">
-        <div className="mx-auto grid h-14 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4">
+        <div className="mx-auto grid h-14 max-w-7xl 2xl:max-w-[90rem] grid-cols-[auto_1fr_auto] items-center gap-3 px-4">
           <Link href="/" aria-label="Fulcrum Wear home" className="shrink-0">
             <Image
               src={fulcrumLogo}
@@ -251,27 +251,30 @@ export default function Header({
             <button
               id="openCart"
               onClick={openCart}
-              className="relative grid h-9 w-9 place-items-center rounded-full transition-colors hover:bg-white/10"
+              className="relative flex h-9 items-center gap-1.5 rounded-full px-2 transition-colors hover:bg-white/10"
               aria-label="Open cart"
             >
-              <svg
-                width="21"
-                height="21"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <path d="M6 6h15l-2 9H8L6 6zm0 0L5 3H2M9 20a1 1 0 100-2 1 1 0 000 2zm9 0a1 1 0 100-2 1 1 0 000 2z" />
-              </svg>
-              {count > 0 ? (
-                <span
-                  id="count"
-                  className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-gold px-1 text-[10px] font-bold text-ink"
+              <span className="text-xs font-semibold">Cart</span>
+              <span className="relative grid place-items-center">
+                <svg
+                  width="21"
+                  height="21"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
                 >
-                  {count}
-                </span>
-              ) : null}
+                  <path d="M6 6h15l-2 9H8L6 6zm0 0L5 3H2M9 20a1 1 0 100-2 1 1 0 000 2zm9 0a1 1 0 100-2 1 1 0 000 2z" />
+                </svg>
+                {count > 0 ? (
+                  <span
+                    id="count"
+                    className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-gold px-1 text-[10px] font-bold text-ink"
+                  >
+                    {count}
+                  </span>
+                ) : null}
+              </span>
             </button>
           </div>
         </div>

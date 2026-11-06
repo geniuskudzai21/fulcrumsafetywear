@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-ink text-white/70 text-sm">
       <div className="tape"></div>
-      <div className="max-w-7xl mx-auto px-4 py-10 grid sm:grid-cols-3 gap-8">
+      <div className="max-w-7xl 2xl:max-w-[90rem] mx-auto px-4 py-10 grid sm:grid-cols-3 gap-8">
         <div>
           <Image
             src={fulcrumLogo}

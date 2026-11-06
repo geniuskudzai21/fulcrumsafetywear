@@ -3,7 +3,7 @@ export default function Loading() {
     <div className="animate-pulse">
       <div className="h-9 bg-ink/10" />
       <div className="h-16 bg-ink" />
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl 2xl:max-w-[90rem] mx-auto px-4 py-8">
         <div className="h-4 w-56 bg-mist rounded" />
         <div className="mt-6 grid gap-8 md:grid-cols-2">
           <div className="aspect-square bg-mist rounded-lg" />
