@@ -18,13 +18,6 @@
   height: 10px;
 }
 
-.hazard-stripe {
-  background: repeating-linear-gradient(
-    135deg,
-    #fcc419 0 10px,
-    #17181c 10px 20px
-  );
-}
 
 .hero-surface {
   background-image:
@@ -88,8 +81,8 @@
   animation: brand-banner-drift 16s ease-in-out infinite alternate;
 }
 
-.brand-live-dot {
-  animation: brand-live-pulse 2.4s ease-in-out infinite;
+.brand-logo-badge {
+  animation: brand-logo-tuck 2s ease-in-out infinite;
 }
 
 .hero-copy {
@@ -198,15 +191,17 @@
   }
 }
 
-@keyframes brand-live-pulse {
+@keyframes brand-logo-tuck {
   0%,
+  55%,
   100% {
-    opacity: 1;
-    box-shadow: 0 0 0 0 rgba(252, 196, 25, 0.45);
+    z-index: 20;
+    transform: translate(0, 0) scale(1);
   }
-  50% {
-    opacity: 0.65;
-    box-shadow: 0 0 0 4px rgba(252, 196, 25, 0);
+  65%,
+  80% {
+    z-index: 0;
+    transform: translate(10px, 8px) scale(0.94);
   }
 }
 
@@ -272,7 +267,7 @@
   .hero-card-shadow,
   .brand-card,
   .brand-banner-image,
-  .brand-live-dot {
+  .brand-logo-badge {
     animation: none;
   }
 }

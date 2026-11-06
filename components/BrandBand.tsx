@@ -77,59 +77,25 @@ export default function BrandBand() {
             </svg>
           </a>
         </div>
-        <div className="brand-collage relative mx-auto w-full max-w-md">
-          <div
-            aria-hidden="true"
-            className="absolute -right-3 -top-3 h-full w-full rounded-[2rem] border border-gold/25"
-          />
-
-          <span className="absolute -left-8 top-1/2 hidden -translate-y-1/2 -rotate-90 text-[10px] font-bold uppercase tracking-[0.34em] text-white/30 lg:block">
-            Built for the shift
-          </span>
-
-          <figure className="brand-card relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#0a0b0e] shadow-2xl shadow-black/45">
-            <div className="hazard-stripe h-2 w-full" aria-hidden="true" />
-
-            <div className="relative aspect-[5/4] overflow-hidden">
-              <Image
-                src="/images/logobanner.jpeg"
-                alt="Fulcrum Safety Wear industrial workwear, mining and PPE"
-                fill
-                sizes="(max-width: 767px) 90vw, 470px"
-                className="brand-banner-image object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0b0e] via-[#0a0b0e]/25 to-transparent" />
-
-              <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/45 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-                <span className="brand-live-dot h-1.5 w-1.5 rounded-full bg-gold" />
-                Site series
-              </span>
-
-              <p className="absolute inset-x-4 bottom-4 text-sm font-semibold text-white/85">
-                Workwear for mining, construction and industry.
-              </p>
-            </div>
-
-            <figcaption className="flex items-center gap-4 border-t border-white/10 bg-white/[0.035] px-4 py-4 sm:px-5">
-              <span className="grid h-16 w-20 shrink-0 place-items-center rounded-xl border border-white/10 bg-[#07080a] p-2">
-                <Image
-                  src={fulcrumLogo}
-                  alt="Fulcrum Safety Wear"
-                  sizes="80px"
-                  className="h-auto w-full"
-                />
-              </span>
-              <div className="min-w-0">
-                <p className="font-bold text-white">Fulcrum Safety Wear</p>
-                <p className="mt-0.5 text-xs text-white/55">
-                  Industrial workwear · Mining · PPE
-                </p>
-              </div>
-              <span className="ml-auto hidden shrink-0 rounded-full border border-gold/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-gold sm:inline-block">
-                Zimbabwe
-              </span>
-            </figcaption>
-          </figure>
+        <div className="brand-collage relative mx-auto w-full max-w-sm">
+          <div className="brand-card relative z-10 aspect-[4/3] overflow-hidden rounded-2xl border border-white/15 bg-[#0a0b0e] shadow-xl shadow-black/40">
+            <Image
+              src="/images/logobanner.jpeg"
+              alt="Fulcrum Safety Wear industrial workwear, mining and PPE"
+              fill
+              sizes="(max-width: 767px) 90vw, 384px"
+              className="brand-banner-image object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+          </div>
+          <div className="brand-logo-badge absolute -bottom-4 -left-4 z-20 rounded-xl border border-white/10 bg-[#07080a] px-3 py-2 shadow-lg shadow-black/40">
+            <Image
+              src={fulcrumLogo}
+              alt="Fulcrum Safety Wear"
+              sizes="96px"
+              className="h-7 w-auto"
+            />
+          </div>
         </div>
       </div>
     </section>
