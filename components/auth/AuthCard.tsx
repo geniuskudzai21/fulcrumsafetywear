@@ -12,7 +12,7 @@ export default function AuthCard({
   children: ReactNode;
 }) {
   return (
-    <div className="w-full max-w-[20.3125rem] bg-white border border-mist rounded-xl shadow-xl shadow-coal/20 p-4 sm:max-w-[23.375rem] sm:p-5 lg:max-w-[27.375rem]">
+    <div className="w-full max-w-[23.1875rem] bg-white border border-mist rounded-xl shadow-xl shadow-coal/20 p-4 sm:p-5">
       <div className="flex flex-col items-center text-center">
         <Image
           src={fulcrumLogo}
