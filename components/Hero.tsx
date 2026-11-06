@@ -69,27 +69,27 @@ export default function Hero() {
       }}
     >
       <div className="hero-glow pointer-events-none absolute -right-36 -top-48 -z-10 h-[34rem] w-[34rem] rounded-full bg-gold/15 blur-3xl" />
-      <div className="mx-auto grid min-h-[540px] max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_0.95fr] md:gap-12 md:py-14 lg:min-h-[590px] lg:px-8">
-        <div className="relative z-10 py-4">
+      <div className="mx-auto grid max-w-7xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 sm:py-5 md:min-h-[430px] md:grid-cols-[1fr_0.88fr] md:gap-8 md:py-7 lg:min-h-[465px] lg:gap-10 lg:px-8">
+        <div className="relative z-10 py-2 md:py-3">
           <div className="flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-gold sm:text-sm">
             <span className="h-px w-8 bg-gold" />
             {slide.eyebrow}
           </div>
           <h1
             key={slide.title}
-            className="hero-copy d mt-5 max-w-2xl text-4xl leading-[1.02] sm:text-5xl lg:text-6xl xl:text-7xl"
+            className="hero-copy d mt-3 max-w-2xl text-3xl leading-[1.02] sm:mt-4 sm:text-5xl lg:text-[3.4rem] xl:text-6xl"
             aria-live="polite"
           >
             {slide.title}
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
+          <p className="mt-3 max-w-xl text-sm leading-6 text-white/70 sm:mt-4 sm:text-lg sm:leading-7">
             {slide.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
             <Link
               href="#shop"
-              className="group inline-flex min-h-12 items-center gap-3 rounded-lg bg-gold px-6 py-3 font-bold text-ink shadow-lg shadow-gold/10 transition hover:-translate-y-0.5 hover:bg-[#ffd84f] focus-visible:outline-white"
+              className="group inline-flex min-h-10 items-center gap-2 rounded-lg bg-gold px-4 py-2.5 text-sm font-bold text-ink shadow-lg shadow-gold/10 transition hover:-translate-y-0.5 hover:bg-[#ffd84f] focus-visible:outline-white sm:min-h-12 sm:gap-3 sm:px-6 sm:py-3 sm:text-base"
             >
               Shop workwear
               <svg
@@ -108,7 +108,7 @@ export default function Hero() {
             <a
               id="waHero"
               href={WHATSAPP_LINK}
-              className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-white/20 px-5 py-3 font-semibold text-white/90 transition hover:border-white/50 hover:bg-white/5"
+              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/20 px-4 py-2.5 text-sm font-semibold text-white/90 transition hover:border-white/50 hover:bg-white/5 sm:min-h-12 sm:px-5 sm:py-3 sm:text-base"
             >
               <svg
                 width="19"
@@ -126,7 +126,7 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-5 text-xs font-medium text-white/60 sm:text-sm">
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/10 pt-3 text-[11px] font-medium text-white/60 sm:mt-6 sm:gap-x-6 sm:gap-y-3 sm:pt-4 sm:text-sm">
             <span className="inline-flex items-center gap-2">
               <svg
                 width="17"
@@ -163,24 +163,58 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="relative mx-auto w-full max-w-[500px] md:ml-auto">
-          <div className="pointer-events-none absolute -inset-3 rotate-3 rounded-[2rem] bg-gold/90 transition-transform duration-700" />
+        <div className="relative mx-auto w-full max-w-[440px] md:ml-auto">
+          <div className="hero-card-shadow pointer-events-none absolute inset-x-7 inset-y-4 rotate-[-8deg] rounded-[1.65rem] bg-white/10" />
+          <div className="hero-card-shadow hero-card-shadow-back pointer-events-none absolute inset-x-4 inset-y-2 rotate-[6deg] rounded-[1.65rem] bg-gold/80" />
           <div
-            className="hero-image-frame relative aspect-[0.98] overflow-hidden rounded-[1.65rem] border border-white/15 bg-gradient-to-br from-white to-mist shadow-2xl shadow-black/40"
+            className="hero-image-frame relative aspect-[1.7] overflow-hidden rounded-[1.35rem] border border-white/15 bg-[radial-gradient(ellipse_at_50%_45%,#fff_0%,#f1f2f4_70%)] shadow-2xl shadow-black/40 sm:aspect-[1.45] sm:rounded-[1.65rem] md:aspect-[1.08] lg:aspect-[1.12]"
             role="group"
             aria-label={`Featured item ${activeSlide + 1} of ${slides.length}`}
           >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_55%_45%,rgba(252,196,25,0.2),transparent_60%)]" />
-            <Image
-              key={slide.image}
-              src={slide.image}
-              alt={slide.alt}
-              fill
-              priority={activeSlide === 0}
-              sizes="(max-width: 767px) 100vw, (max-width: 1279px) 45vw, 520px"
-              className="hero-product-image object-contain p-8 sm:p-10"
-            />
-            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-xl border border-white/60 bg-white/90 px-4 py-3 text-coal shadow-lg backdrop-blur sm:bottom-5 sm:left-5 sm:right-5">
+            <div
+              key={`deck-${activeSlide}`}
+              className="hero-product-deck absolute inset-0"
+            >
+              <div className="hero-feature-card absolute inset-[7%_12%_12%_7%] overflow-hidden rounded-2xl border border-white/90 bg-white/80 shadow-[0_22px_48px_rgba(20,21,26,0.18)] sm:inset-[7%_14%_12%_8%]">
+                <Image
+                  src={slide.image}
+                  alt={slide.alt}
+                  fill
+                  priority={activeSlide === 0}
+                  sizes="(max-width: 767px) 80vw, (max-width: 1279px) 42vw, 480px"
+                  className="hero-product-image object-contain p-3 sm:p-5"
+                />
+              </div>
+              {[1, 2].map((offset) => {
+                const imageIndex = (activeSlide + offset) % slides.length;
+                const item = slides[imageIndex];
+                return (
+                  <div
+                    key={item.image}
+                    className={`hero-orbit-card hero-orbit-card-${offset} absolute aspect-square w-[29%] overflow-hidden rounded-xl border-[3px] border-white bg-mist shadow-[0_14px_32px_rgba(0,0,0,0.22)] sm:rounded-2xl sm:border-4`}
+                    aria-hidden="true"
+                  >
+                    <Image
+                      src={item.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 767px) 28vw, 140px"
+                      className="object-contain p-1.5 mix-blend-multiply sm:p-2"
+                    />
+                    <span className="absolute inset-x-0 bottom-0 bg-ink/80 py-1 text-center text-[8px] font-bold uppercase tracking-wider text-white sm:text-[9px]">
+                      {item.note}
+                    </span>
+                  </div>
+                );
+              })}
+              <span className="hero-edition-stamp absolute right-[4%] top-[8%] grid h-12 w-12 place-items-center rounded-full border border-white/70 bg-gold text-center text-[8px] font-black uppercase leading-tight tracking-wide text-ink shadow-lg sm:h-14 sm:w-14 sm:text-[9px]">
+                Site
+                <br />
+                tested
+              </span>
+            </div>
+            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-3 rounded-xl border border-white/60 bg-white/90 px-2.5 py-1.5 text-coal shadow-lg backdrop-blur sm:bottom-4 sm:left-4 sm:right-4 sm:px-3 sm:py-2">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-coal/45">
                   Fulcrum field notes
@@ -203,7 +237,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="mt-5 flex items-center justify-between gap-4">
+          <div className="relative z-10 mt-2 flex items-center justify-between gap-4 sm:mt-3">
             <div className="flex items-center gap-2" aria-label="Choose featured slide">
               {slides.map((item, index) => (
                 <button

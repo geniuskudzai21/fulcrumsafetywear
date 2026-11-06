@@ -77,19 +77,32 @@ export default function BrandBand() {
             </svg>
           </a>
         </div>
-        <div className="relative mx-auto w-full max-w-md">
-          <div className="absolute -inset-3 rotate-2 rounded-[2rem] bg-gold/80" />
-          <div className="relative overflow-hidden rounded-[1.65rem] border border-white/10 bg-[#08090b] p-6 shadow-2xl shadow-black/30 sm:p-10">
+        <div className="brand-collage relative mx-auto min-h-[300px] w-full max-w-lg sm:min-h-[370px]">
+          <div className="brand-banner-frame absolute inset-x-4 top-2 h-[72%] rotate-[-4deg] overflow-hidden rounded-[1.65rem] border border-white/15 bg-white shadow-2xl shadow-black/35 sm:inset-x-8">
+            <Image
+              src="/images/logobanner.jpeg"
+              alt="Fulcrum Safety Wear industrial workwear, mining and PPE"
+              fill
+              sizes="(max-width: 767px) 85vw, 450px"
+              className="brand-banner-image object-cover"
+            />
+          </div>
+          <div className="brand-logo-card absolute bottom-0 right-0 z-10 w-[68%] rounded-2xl border border-white/15 bg-[#08090b] p-3 shadow-2xl shadow-black/50 sm:bottom-2 sm:right-2 sm:w-[62%] sm:p-4">
             <Image
               src={fulcrumLogo}
               alt="Fulcrum Safety Wear"
-              sizes="(max-width: 767px) 90vw, 450px"
-              className="mx-auto h-auto w-full max-w-sm"
+              sizes="(max-width: 767px) 60vw, 300px"
+              className="mx-auto h-auto w-full"
             />
-            <p className="mt-4 text-center text-xs font-bold uppercase tracking-[0.2em] text-white/50">
+            <p className="mt-1 text-center text-[9px] font-bold uppercase tracking-[0.16em] text-white/50 sm:text-[10px] sm:tracking-[0.2em]">
               Industrial workwear · Mining · PPE
             </p>
           </div>
+          <span className="brand-stamp absolute bottom-4 left-0 z-20 grid h-[4.5rem] w-[4.5rem] place-items-center rounded-full border-[3px] border-coal bg-gold text-center text-[9px] font-black uppercase leading-tight tracking-wider text-ink shadow-lg sm:bottom-7 sm:left-2 sm:h-20 sm:w-20 sm:text-[10px]">
+            Built for
+            <br />
+            the shift
+          </span>
         </div>
       </div>
     </section>
