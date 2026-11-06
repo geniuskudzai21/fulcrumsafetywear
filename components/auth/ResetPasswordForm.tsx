@@ -37,7 +37,7 @@ export default function ResetPasswordForm() {
             type="password"
             autoComplete="new-password"
             required
-            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal"
+            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal outline-none focus:outline-none focus-visible:outline-none"
           />
           <FieldError message={state.fieldErrors?.password} />
         </label>
@@ -49,7 +49,7 @@ export default function ResetPasswordForm() {
             type="password"
             autoComplete="new-password"
             required
-            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal"
+            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal outline-none focus:outline-none focus-visible:outline-none"
           />
           <FieldError message={state.fieldErrors?.confirmPassword} />
         </label>
