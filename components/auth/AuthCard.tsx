@@ -10,10 +10,10 @@ export default function AuthCard({
   children: ReactNode;
 }) {
   return (
-    <div className="w-full max-w-md bg-white border border-mist rounded-xl shadow-sm p-6 sm:p-8">
-      <h1 className="d text-2xl">{title}</h1>
-      <p className="mt-2 text-sm text-coal/65">{subtitle}</p>
-      <div className="mt-6">{children}</div>
+    <div className="w-full max-w-sm bg-white border border-mist rounded-xl shadow-sm p-5 sm:p-6">
+      <h1 className="d text-xl">{title}</h1>
+      <p className="mt-1 text-xs text-coal/65">{subtitle}</p>
+      <div className="mt-4">{children}</div>
     </div>
   );
 }

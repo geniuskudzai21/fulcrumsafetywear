@@ -17,8 +17,8 @@ export default function SubmitButton({
       disabled={pending}
       className={
         variant === "primary"
-          ? "w-full bg-ink text-gold font-bold py-3 rounded disabled:opacity-50"
-          : "w-full border border-steel bg-white text-coal font-bold py-3 rounded hover:bg-mist disabled:opacity-50"
+          ? "w-full bg-ink text-gold font-bold py-2 rounded disabled:opacity-50"
+          : "w-full flex items-center justify-center gap-2 border border-steel bg-white text-coal font-bold py-2 rounded hover:bg-mist disabled:opacity-50"
       }
     >
       {pending ? "Please wait..." : children}

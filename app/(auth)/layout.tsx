@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import Footer from "@/components/Footer";
 import fulcrumLogo from "@/images/logo.png";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
@@ -22,10 +21,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </div>
         <div className="tape"></div>
       </header>
-      <main className="flex-1 grid place-items-center px-4 py-10">
+      <main className="flex-1 grid place-items-center px-4 py-6">
         {children}
       </main>
-      <Footer />
     </div>
   );
 }

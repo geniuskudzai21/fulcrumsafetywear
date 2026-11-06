@@ -47,7 +47,7 @@ export default function SignupForm({
       {error ? (
         <p
           role="alert"
-          className="mb-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+          className="mb-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800"
         >
           {error}
         </p>
@@ -55,13 +55,13 @@ export default function SignupForm({
 
       <GoogleForm next={next} />
 
-      <div className="my-5 flex items-center gap-3 text-xs text-coal/50">
+      <div className="my-4 flex items-center gap-3 text-xs text-coal/50">
         <span className="h-px flex-1 bg-mist" />
         or use your email
         <span className="h-px flex-1 bg-mist" />
       </div>
 
-      <form action={action} className="space-y-4">
+      <form action={action} className="space-y-3">
         <input type="hidden" name="next" value={next} />
 
         <label className="block text-sm font-semibold">
@@ -71,7 +71,7 @@ export default function SignupForm({
             type="text"
             autoComplete="name"
             required
-            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal"
+            className="mt-1 w-full border border-steel rounded px-3 py-1.5 font-normal"
           />
           <FieldError message={state.fieldErrors?.fullName} />
         </label>
@@ -83,7 +83,7 @@ export default function SignupForm({
             type="email"
             autoComplete="email"
             required
-            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal"
+            className="mt-1 w-full border border-steel rounded px-3 py-1.5 font-normal"
           />
           <FieldError message={state.fieldErrors?.email} />
         </label>
@@ -95,7 +95,7 @@ export default function SignupForm({
             type="password"
             autoComplete="new-password"
             required
-            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal"
+            className="mt-1 w-full border border-steel rounded px-3 py-1.5 font-normal"
           />
           <FieldError message={state.fieldErrors?.password} />
         </label>
@@ -107,7 +107,7 @@ export default function SignupForm({
             type="password"
             autoComplete="new-password"
             required
-            className="mt-1 w-full border border-steel rounded px-3 py-2 font-normal"
+            className="mt-1 w-full border border-steel rounded px-3 py-1.5 font-normal"
           />
           <FieldError message={state.fieldErrors?.confirmPassword} />
         </label>
@@ -115,7 +115,7 @@ export default function SignupForm({
         <SubmitButton>Create account</SubmitButton>
       </form>
 
-      <p className="mt-5 text-sm text-coal/65">
+      <p className="mt-4 text-sm text-coal/65">
         Already have an account?{" "}
         <Link
           href={`/login?next=${encodeURIComponent(next)}`}
