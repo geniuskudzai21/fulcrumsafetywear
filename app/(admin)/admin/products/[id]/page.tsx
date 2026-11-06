@@ -17,16 +17,6 @@ type ProductDetail = {
   tag: string | null;
   image_path: string | null;
   active: boolean;
-  variants: {
-    id: string;
-    color_name: string;
-    color_hex: string;
-    size: string;
-    sku: string;
-    stock: number;
-    price_override: number | string | null;
-    created_at: string;
-  }[];
 };
 
 export default async function AdminEditProductPage({ params }: Props) {
@@ -37,7 +27,7 @@ export default async function AdminEditProductPage({ params }: Props) {
     supabase
       .from("products")
       .select(
-        "id, name, slug, description, category_id, base_price, tag, image_path, active, variants(id, color_name, color_hex, size, sku, stock, price_override, created_at)",
+        "id, name, slug, description, category_id, base_price, tag, image_path, active",
       )
       .eq("id", id)
       .maybeSingle()
@@ -57,10 +47,6 @@ export default async function AdminEditProductPage({ params }: Props) {
           .from("products")
           .getPublicUrl(product.image_path).data.publicUrl
     : "/images/logo2.jpeg";
-
-  const variants = [...(product.variants ?? [])].sort((a, b) =>
-    a.created_at.localeCompare(b.created_at),
-  );
 
   return (
     <div>
@@ -90,7 +76,7 @@ export default async function AdminEditProductPage({ params }: Props) {
 
       <div className="mt-6">
         <ProductForm
-          key={`${product.id}:${variants.map((variant) => variant.id).join(",")}`}
+          key={product.id}
           product={{
             id: product.id,
             name: product.name,
@@ -101,18 +87,6 @@ export default async function AdminEditProductPage({ params }: Props) {
             tag: product.tag ?? "",
             imagePath: product.image_path ?? "",
             active: product.active,
-            variants: variants.map((variant) => ({
-              id: variant.id,
-              colorName: variant.color_name,
-              colorHex: variant.color_hex,
-              size: variant.size,
-              sku: variant.sku,
-              stock: variant.stock,
-              priceOverride:
-                variant.price_override === null
-                  ? null
-                  : Number(variant.price_override),
-            })),
           }}
           categories={categories ?? []}
           imageUrl={imageUrl}

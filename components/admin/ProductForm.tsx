@@ -19,16 +19,6 @@ import { slugify } from "@/lib/admin/format";
 
 type Category = { id: string; name: string };
 
-type VariantInitial = {
-  id: string;
-  colorName: string;
-  colorHex: string;
-  size: string;
-  sku: string;
-  stock: number;
-  priceOverride: number | null;
-};
-
 type ProductInitial = {
   id: string | null;
   name: string;
@@ -39,34 +29,9 @@ type ProductInitial = {
   tag: string;
   imagePath: string;
   active: boolean;
-  variants: VariantInitial[];
-};
-
-type VariantRow = {
-  key: string;
-  id: string;
-  colorName: string;
-  colorHex: string;
-  size: string;
-  sku: string;
-  stock: string;
-  priceOverride: string;
 };
 
 const initial: ProductFormState = {};
-
-function newRow(): VariantRow {
-  return {
-    key: crypto.randomUUID(),
-    id: "",
-    colorName: "",
-    colorHex: "#fcc419",
-    size: "",
-    sku: "",
-    stock: "0",
-    priceOverride: "",
-  };
-}
 
 export default function ProductForm({
   product,
@@ -85,21 +50,6 @@ export default function ProductForm({
   const [slugTouched, setSlugTouched] = useState(Boolean(product.slug));
   const [removeImage, setRemoveImage] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
-  const [variants, setVariants] = useState<VariantRow[]>(
-    product.variants.length
-      ? product.variants.map((variant) => ({
-          key: variant.id || crypto.randomUUID(),
-          id: variant.id,
-          colorName: variant.colorName,
-          colorHex: variant.colorHex,
-          size: variant.size,
-          sku: variant.sku,
-          stock: String(variant.stock),
-          priceOverride:
-            variant.priceOverride === null ? "" : String(variant.priceOverride),
-        }))
-      : [newRow()],
-  );
   const previewUrl = useRef<string | null>(null);
 
   useEffect(() => {
@@ -130,30 +80,6 @@ export default function ProductForm({
     setSlug(value);
   }
 
-  function updateVariant(
-    key: string,
-    field: keyof Omit<VariantRow, "key">,
-    value: string,
-  ) {
-    setVariants((rows) =>
-      rows.map((row) => (row.key === key ? { ...row, [field]: value } : row)),
-    );
-  }
-
-  function removeVariant(row: VariantRow) {
-    if (
-      !window.confirm(
-        row.id
-          ? "Remove this variant? If it has order history the save will be rejected."
-          : "Remove this variant row?",
-      )
-    ) {
-      return;
-    }
-
-    setVariants((rows) => rows.filter((entry) => entry.key !== row.key));
-  }
-
   function handleImage(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -178,21 +104,6 @@ export default function ProductForm({
         type="hidden"
         name="currentImagePath"
         value={product.imagePath}
-      />
-      <input
-        type="hidden"
-        name="variants"
-        value={JSON.stringify(
-          variants.map((variant) => ({
-            id: variant.id,
-            colorName: variant.colorName,
-            colorHex: variant.colorHex,
-            size: variant.size,
-            sku: variant.sku,
-            stock: Number(variant.stock) || 0,
-            priceOverride: variant.priceOverride,
-          })),
-        )}
       />
 
       {state.error ? (
@@ -272,6 +183,24 @@ export default function ProductForm({
             />
           </label>
 
+          {product.id ? null : (
+            <label className="block text-sm font-semibold">
+              Stock
+              <input
+                name="initialStock"
+                type="number"
+                min="0"
+                step="1"
+                defaultValue={0}
+                required
+                className="mt-1 w-full rounded border border-steel px-3 py-2 font-normal"
+              />
+              <span className="mt-1 block text-xs font-normal text-coal/50">
+                You can change stock later on the Inventory page.
+              </span>
+            </label>
+          )}
+
           <label className="block text-sm font-semibold">
             Tag
             <input
@@ -341,146 +270,10 @@ export default function ProductForm({
         </div>
       </section>
 
-      <section className="rounded-xl border border-mist bg-white p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="d text-lg">Variants</h2>
-            <p className="text-xs text-coal/55">
-              Colour, size, SKU, stock and optional price override.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setVariants((rows) => [...rows, newRow()])}
-            className="rounded border border-steel px-3 py-2 text-sm font-semibold hover:bg-mist"
-          >
-            Add variant
-          </button>
-        </div>
-
-        <div className="mt-4 space-y-4">
-          {variants.map((variant, index) => (
-            <div
-              key={variant.key}
-              className="rounded-lg border border-mist bg-mist/40 p-4"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-bold">Variant {index + 1}</p>
-                <button
-                  type="button"
-                  onClick={() => removeVariant(variant)}
-                  className="text-xs font-semibold text-red-700 underline"
-                >
-                  Remove
-                </button>
-              </div>
-
-              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                <label className="block text-xs font-semibold">
-                  Colour name
-                  <input
-                    value={variant.colorName}
-                    onChange={(event) =>
-                      updateVariant(
-                        variant.key,
-                        "colorName",
-                        event.target.value,
-                      )
-                    }
-                    required
-                    className="mt-1 w-full rounded border border-steel bg-white px-3 py-2 text-sm font-normal"
-                  />
-                </label>
-
-                <label className="block text-xs font-semibold">
-                  Hex colour
-                  <div className="mt-1 flex items-center gap-2">
-                    <span
-                      className="h-9 w-9 shrink-0 rounded border border-steel"
-                      style={{ backgroundColor: variant.colorHex }}
-                    />
-                    <input
-                      value={variant.colorHex}
-                      onChange={(event) =>
-                        updateVariant(
-                          variant.key,
-                          "colorHex",
-                          event.target.value,
-                        )
-                      }
-                      pattern="^#[0-9a-fA-F]{6}$"
-                      required
-                      className="w-full rounded border border-steel bg-white px-3 py-2 text-sm font-normal"
-                    />
-                  </div>
-                </label>
-
-                <label className="block text-xs font-semibold">
-                  Size
-                  <input
-                    value={variant.size}
-                    onChange={(event) =>
-                      updateVariant(variant.key, "size", event.target.value)
-                    }
-                    required
-                    className="mt-1 w-full rounded border border-steel bg-white px-3 py-2 text-sm font-normal"
-                  />
-                </label>
-
-                <label className="block text-xs font-semibold">
-                  SKU
-                  <input
-                    value={variant.sku}
-                    onChange={(event) =>
-                      updateVariant(variant.key, "sku", event.target.value)
-                    }
-                    required
-                    className="mt-1 w-full rounded border border-steel bg-white px-3 py-2 text-sm font-normal"
-                  />
-                </label>
-
-                <label className="block text-xs font-semibold">
-                  Stock
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={variant.stock}
-                    onChange={(event) =>
-                      updateVariant(variant.key, "stock", event.target.value)
-                    }
-                    required
-                    className="mt-1 w-full rounded border border-steel bg-white px-3 py-2 text-sm font-normal"
-                  />
-                </label>
-
-                <label className="block text-xs font-semibold">
-                  Price override (optional)
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={variant.priceOverride}
-                    onChange={(event) =>
-                      updateVariant(
-                        variant.key,
-                        "priceOverride",
-                        event.target.value,
-                      )
-                    }
-                    className="mt-1 w-full rounded border border-steel bg-white px-3 py-2 text-sm font-normal"
-                  />
-                </label>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="submit"
-          disabled={pending || !variants.length}
+          disabled={pending}
           className="bg-ink text-gold font-bold py-3 px-6 rounded disabled:opacity-50"
         >
           {pending ? "Saving..." : "Save product"}

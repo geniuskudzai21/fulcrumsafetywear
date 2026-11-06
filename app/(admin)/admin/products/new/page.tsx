@@ -15,7 +15,7 @@ export default async function AdminNewProductPage() {
         <div>
           <h1 className="d text-2xl sm:text-3xl">New product</h1>
           <p className="mt-1 text-sm text-coal/60">
-            Create the product, then add its variants.
+            Add the product details and initial stock.
           </p>
         </div>
         <Link
@@ -39,7 +39,6 @@ export default async function AdminNewProductPage() {
             tag: "",
             imagePath: "",
             active: true,
-            variants: [],
           }}
           categories={categories ?? []}
           imageUrl="/images/logo2.jpeg"

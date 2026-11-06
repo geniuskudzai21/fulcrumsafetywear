@@ -3,6 +3,7 @@
 import type { Json } from "@/lib/database.types";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
+import { slugify } from "@/lib/admin/format";
 import { adminImageSchema, adminProductSchema } from "@/lib/admin/validation";
 
 export type ProductFormState = {
@@ -17,17 +18,6 @@ const IMAGE_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/webp": "webp",
 };
-
-function parseVariants(value: FormDataEntryValue | null) {
-  if (typeof value !== "string" || !value) return null;
-
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
-}
 
 function toFieldErrors(error: {
   issues: { path: PropertyKey[]; message: string }[];
@@ -58,10 +48,64 @@ export async function saveProductAction(
   formData: FormData,
 ): Promise<ProductFormState> {
   const { supabase, user } = await requireAdmin();
-  const variants = parseVariants(formData.get("variants"));
+  const editingProductId = String(formData.get("id") ?? "").trim();
+  let variants: {
+    id: string;
+    colorName: string;
+    colorHex: string;
+    size: string;
+    sku: string;
+    stock: number;
+    priceOverride: number | string | null;
+  }[] = [];
 
-  if (!variants) {
-    return { error: "Add at least one variant before saving." };
+  if (editingProductId) {
+    const { data: existing, error: variantsError } = await supabase
+      .from("variants")
+      .select("id, color_name, color_hex, size, sku, stock, price_override")
+      .eq("product_id", editingProductId)
+      .order("created_at", { ascending: true });
+
+    if (variantsError) {
+      return {
+        error: `Could not load product variants: ${variantsError.message}`,
+      };
+    }
+
+    variants = (existing ?? []).map((variant) => ({
+      id: variant.id,
+      colorName: variant.color_name,
+      colorHex: variant.color_hex,
+      size: variant.size,
+      sku: variant.sku,
+      stock: variant.stock,
+      priceOverride: variant.price_override,
+    }));
+  }
+
+  if (!variants.length) {
+    const rawStock = formData.get("initialStock");
+    const stock = Number(rawStock ?? 0);
+
+    if (!Number.isInteger(stock) || stock < 0 || stock > 1_000_000) {
+      return { fieldErrors: { initialStock: "Enter a valid stock quantity." } };
+    }
+
+    const name = String(formData.get("name") ?? "").trim();
+    const slug =
+      slugify(String(formData.get("slug") ?? "").trim() || name) || "product";
+
+    variants = [
+      {
+        id: "",
+        colorName: "Standard",
+        colorHex: "#000000",
+        size: "One Size",
+        sku: `${slug.slice(0, 60)}-${crypto.randomUUID().slice(0, 8)}`,
+        stock,
+        priceOverride: null,
+      },
+    ];
   }
 
   const parsed = adminProductSchema.safeParse({

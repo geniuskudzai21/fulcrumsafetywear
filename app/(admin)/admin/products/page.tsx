@@ -111,7 +111,6 @@ export default async function AdminProductsPage({
               <th className="px-4 py-3 font-semibold">Product</th>
               <th className="px-4 py-3 font-semibold">Category</th>
               <th className="px-4 py-3 font-semibold">Base price</th>
-              <th className="px-4 py-3 font-semibold">Variants</th>
               <th className="px-4 py-3 font-semibold">Stock</th>
               <th className="px-4 py-3 font-semibold">Status</th>
               <th className="px-4 py-3 text-right font-semibold">Edit</th>
@@ -157,7 +156,6 @@ export default async function AdminProductsPage({
                     <td className="px-4 py-3">
                       {formatAdminMoney(product.base_price)}
                     </td>
-                    <td className="px-4 py-3">{product.variants.length}</td>
                     <td className="px-4 py-3">{stock}</td>
                     <td className="px-4 py-3">
                       <ProductActiveToggle
@@ -179,7 +177,7 @@ export default async function AdminProductsPage({
               })
             ) : (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-coal/60">
+                <td colSpan={6} className="px-4 py-10 text-center text-coal/60">
                   No products found.
                 </td>
               </tr>

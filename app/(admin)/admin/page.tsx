@@ -1,38 +1,17 @@
 import Link from "next/link";
-import StatusBadge from "@/components/admin/StatusBadge";
 import { requireAdmin } from "@/lib/admin/auth";
 import { LOW_STOCK_THRESHOLD } from "@/lib/admin/config";
-import {
-  formatAdminDateTime,
-  formatAdminMoney,
-} from "@/lib/admin/format";
-
-type RecentOrder = {
-  id: string;
-  name: string;
-  phone: string;
-  city: string;
-  status: string;
-  total: number | string;
-  currency: string;
-  created_at: string;
-};
+import { formatAdminMoney } from "@/lib/admin/format";
 
 export default async function AdminDashboardPage() {
   const { supabase } = await requireAdmin();
 
-  const [{ data: stats, error: statsError }, { data: orders }] =
-    await Promise.all([
-      supabase.rpc("admin_dashboard_stats", {
-        p_low_stock: LOW_STOCK_THRESHOLD,
-      }),
-      supabase
-        .from("orders")
-        .select("id, name, phone, city, status, total, currency, created_at")
-        .order("created_at", { ascending: false })
-        .limit(8)
-        .returns<RecentOrder[]>(),
-    ]);
+  const { data: stats, error: statsError } = await supabase.rpc(
+    "admin_dashboard_stats",
+    {
+      p_low_stock: LOW_STOCK_THRESHOLD,
+    },
+  );
 
   const summary = stats?.[0];
 
@@ -77,19 +56,11 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="d text-2xl sm:text-3xl">Dashboard</h1>
-          <p className="mt-1 text-sm text-coal/60">
-            Store performance and recent orders.
-          </p>
-        </div>
-        <Link
-          href="/admin/orders"
-          className="text-sm font-semibold underline"
-        >
-          View all orders
-        </Link>
+      <div>
+        <h1 className="d text-2xl sm:text-3xl">Dashboard</h1>
+        <p className="mt-1 text-sm text-coal/60">
+          Store performance at a glance.
+        </p>
       </div>
 
       {statsError ? (
@@ -113,66 +84,6 @@ export default async function AdminDashboardPage() {
           </Link>
         ))}
       </div>
-
-      <section className="mt-8">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="d text-xl">Recent orders</h2>
-          <Link href="/admin/orders" className="text-sm font-semibold underline">
-            All orders
-          </Link>
-        </div>
-
-        <div className="mt-4 overflow-x-auto rounded-xl border border-mist bg-white">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="bg-mist text-coal/60">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Order</th>
-                <th className="px-4 py-3 font-semibold">Customer</th>
-                <th className="px-4 py-3 font-semibold">City</th>
-                <th className="px-4 py-3 font-semibold">Placed</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 text-right font-semibold">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders?.length ? (
-                orders.map((order) => (
-                  <tr key={order.id} className="border-t border-mist align-top">
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/admin/orders/${order.id}`}
-                        className="font-mono text-xs font-semibold underline"
-                      >
-                        {order.id.slice(0, 8).toUpperCase()}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3">
-                      <p className="font-semibold">{order.name}</p>
-                      <p className="text-xs text-coal/55">{order.phone}</p>
-                    </td>
-                    <td className="px-4 py-3">{order.city}</td>
-                    <td className="px-4 py-3 text-xs text-coal/65">
-                      {formatAdminDateTime(order.created_at)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={order.status} />
-                    </td>
-                    <td className="px-4 py-3 text-right font-semibold">
-                      {formatAdminMoney(order.total, order.currency)}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-coal/60">
-                    No orders yet. Orders will appear here after customers place them.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
     </div>
   );
 }

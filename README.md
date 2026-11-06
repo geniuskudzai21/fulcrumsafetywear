@@ -34,9 +34,7 @@ accounts, and a cart that syncs across devices.
    numeric order, through `005_admin_overview_pagination.sql`.
 
 4. To preview the storefront with sample products, run `supabase/seed.sql` in
-   the Supabase SQL Editor. To preview the admin orders dashboard, optionally
-   run `supabase/seed_admin_orders.sql` after the product seed. The order seed
-   creates clearly fake orders; do not use it in production.
+   the Supabase SQL Editor.
 
 5. Create your first customer account, then replace `you@example.com` in
    `supabase/make_admin.sql` with that account's email and run the script in the

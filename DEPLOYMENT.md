@@ -15,7 +15,6 @@ npm run build
 ```
 - Confirm `.env` is NOT committed (`.gitignore` already ignores `.env*`).
 - Confirm all changes are pushed: `git push origin main`.
-- Do not run `supabase/seed_admin_orders.sql` in production — it creates fake orders.
 
 ## 3. Create the Vercel project
 1. Vercel Dashboard → **Add New → Project** → import `fulcrumsafetywear`.
