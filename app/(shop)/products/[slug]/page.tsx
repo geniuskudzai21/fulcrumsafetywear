@@ -131,7 +131,7 @@ export default async function ProductPage({ params }: Props) {
 
             <div className="mt-8 border-t border-mist pt-4 text-sm text-coal/60">
               <p>Nationwide delivery across Zimbabwe.</p>
-              <p>Pay with EcoCash, card or cash on delivery.</p>
+              <p>Pay with EcoCash, OneMoney or Zimswitch via Paynow.</p>
             </div>
           </div>
         </div>

@@ -3,12 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cartSubtotal, useCartStore } from "@/lib/store/cart";
-import { formatMoney, useCurrencyStore } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
 import { useStore } from "./StoreProvider";
 
 export default function CheckoutSummary() {
   const items = useCartStore((state) => state.items);
-  const currency = useCurrencyStore((state) => state.currency);
   const { openCheckout } = useStore();
 
   if (!items.length) {
@@ -51,11 +50,11 @@ export default function CheckoutSummary() {
                 {item.color}, {item.size}
               </p>
               <p className="mt-1">
-                {item.qty} x {formatMoney(item.price, currency)}
+                {item.qty} x {formatMoney(item.price, "USD")}
               </p>
             </div>
             <p className="font-bold">
-              {formatMoney(item.price * item.qty, currency)}
+              {formatMoney(item.price * item.qty, "USD")}
             </p>
           </div>
         ))}
@@ -63,10 +62,10 @@ export default function CheckoutSummary() {
 
       <div className="mt-6 flex justify-between border-t border-mist pt-4 text-lg font-bold">
         <span>Subtotal</span>
-        <span>{formatMoney(cartSubtotal(items), currency)}</span>
+        <span>{formatMoney(cartSubtotal(items), "USD")}</span>
       </div>
       <p className="mt-1 text-xs text-coal/60">
-        Delivery is confirmed by city before payment.
+        Delivery is confirmed by city before payment. Paynow charges in USD.
       </p>
 
       <button
@@ -74,10 +73,10 @@ export default function CheckoutSummary() {
         onClick={openCheckout}
         className="mt-4 w-full bg-ink text-gold font-bold py-3 rounded"
       >
-        Continue to order
+        Continue to payment
       </button>
       <p className="mt-3 text-xs text-coal/60">
-        Online payments are not enabled yet. Orders are confirmed on WhatsApp.
+        Pay securely with EcoCash, OneMoney or Zimswitch via Paynow.
       </p>
     </div>
   );

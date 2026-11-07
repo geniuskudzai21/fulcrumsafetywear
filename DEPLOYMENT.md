@@ -64,8 +64,21 @@ Important: `NEXT_PUBLIC_*` values are **inlined at build time** — changing the
 - Create a **public** bucket named `products` (migrations only add policies, not the bucket).
 - Admin image uploads depend on this.
 
+### Paynow
+- Register/sign in: https://www.paynow.co.zw/Customer/Register
+- Create the integration and get the ID/key: https://www.paynow.co.zw/Home/Receive
+- Full steps: https://developers.paynow.co.zw/docs/paynow/integration_generation/
+- Test mode: https://developers.paynow.co.zw/docs/paynow/test_mode/
+- Create an **Advanced Integration**, leave the Paynow Notification URL blank, and enable EcoCash, OneMoney and Zimswitch.
+- Set `PAYNOW_INTEGRATION_ID`, `PAYNOW_INTEGRATION_KEY`, `PAYNOW_RESULT_URL` and `PAYNOW_RETURN_URL` as server-only Vercel env vars.
+- `PAYNOW_RESULT_URL` must be `https://<domain>/api/paynow/webhook` and publicly reachable.
+- `PAYNOW_RETURN_URL` must be `https://<domain>/checkout/return`.
+- While testing, set `PAYNOW_AUTH_EMAIL` to the Paynow merchant login email. Remove it before going live.
+- After a successful test, click **Request to be Set Live**, generate a new key, update the env vars, and redeploy.
+- Run the test checklist in `README.md` against the Paynow test integration before going live.
+
 ## 7. Database setup
-1. Apply migrations in order (`001` → `005`) via Supabase SQL Editor, or `supabase link` + `supabase db push`.
+1. Apply migrations in order (`001` → `006`) via Supabase SQL Editor, or `supabase link` + `supabase db push`.
 2. Seed catalogue (fresh project): run `supabase/seed.sql`.
 3. Create the admin user (sign up first), then run `supabase/make_admin.sql` with the real email.
 4. Verify RLS is enabled and policies exist.
@@ -79,6 +92,8 @@ Important: `NEXT_PUBLIC_*` values are **inlined at build time** — changing the
 - Google sign-in works.
 - Forgot/reset password round-trips.
 - Cart syncs across devices; checkout requires auth.
+- Paynow test payment succeeds; webhook marks the order paid and decrements stock.
+- Failed and cancelled Paynow payments leave stock unchanged.
 - `/admin` accessible only to the admin account; product image upload succeeds.
 - `sitemap.xml` and `robots.txt` show the production domain.
 - No console errors; Vercel + Supabase logs clean.

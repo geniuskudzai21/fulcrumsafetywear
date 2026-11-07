@@ -30,6 +30,26 @@ export function createPublicClient() {
   });
 }
 
+// Server-only admin client. It bypasses RLS, so it must never be imported by
+// a client component and must never be used to read data without an explicit
+// ownership or admin check.
+export function createServiceClient() {
+  const { url } = getPublicEnv();
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!serviceRoleKey) {
+    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY");
+  }
+
+  return createSupabaseClient<Database>(url, serviceRoleKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
+}
+
 export async function createClient() {
   const cookieStore = await cookies();
   const { url, anonKey } = getPublicEnv();

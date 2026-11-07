@@ -207,29 +207,53 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          error: string | null
           id: string
+          instructions: string | null
+          method: string | null
           order_id: string
+          paid_at: string | null
+          poll_url: string | null
           provider: string
           provider_ref: string | null
+          raw_status: string | null
+          reference: string | null
           status: string
+          updated_at: string
         }
         Insert: {
           amount: number
           created_at?: string
+          error?: string | null
           id?: string
+          instructions?: string | null
+          method?: string | null
           order_id: string
+          paid_at?: string | null
+          poll_url?: string | null
           provider: string
           provider_ref?: string | null
+          raw_status?: string | null
+          reference?: string | null
           status?: string
+          updated_at?: string
         }
         Update: {
           amount?: number
           created_at?: string
+          error?: string | null
           id?: string
+          instructions?: string | null
+          method?: string | null
           order_id?: string
+          paid_at?: string | null
+          poll_url?: string | null
           provider?: string
           provider_ref?: string | null
+          raw_status?: string | null
+          reference?: string | null
           status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -420,6 +444,41 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      create_paynow_order: {
+        Args: {
+          p_address: string
+          p_city: string
+          p_items: Json
+          p_method: string
+          p_name: string
+          p_phone: string
+          p_reference: string
+          p_user_id: string
+        }
+        Returns: {
+          currency: string
+          order_id: string
+          payment_id: string
+          total: number
+        }[]
+      }
+      finalize_paynow_payment: {
+        Args: {
+          p_amount?: number
+          p_poll_url?: string
+          p_provider_ref?: string
+          p_raw_status?: string
+          p_reference: string
+          p_status: string
+        }
+        Returns: {
+          changed: boolean
+          order_id: string
+          order_status: string
+          payment_id: string
+          payment_status: string
+        }[]
       }
       is_admin: { Args: never; Returns: boolean }
     }

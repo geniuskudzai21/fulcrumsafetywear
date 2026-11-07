@@ -23,8 +23,9 @@ export default async function CheckoutPage() {
         <p className="text-sm text-coal/60">Secure checkout</p>
         <h1 className="d text-3xl md:text-4xl mt-1">Review your order</h1>
         <p className="mt-2 text-sm text-coal/65">
-          Confirm your items and send the order to our team on WhatsApp. We
-          confirm delivery and payment before dispatch.
+          Confirm your items and pay securely with EcoCash, OneMoney or
+          Zimswitch via Paynow. Your order is sent to our team once payment is
+          confirmed.
         </p>
         <CheckoutSummary />
       </section>

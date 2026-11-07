@@ -29,7 +29,7 @@ export default function Footer() {
         <div>
           <p className="font-bold text-white">We accept</p>
           <p className="mt-2">
-            EcoCash via Paynow, Visa and Mastercard, cash on delivery
+            EcoCash, OneMoney and Zimswitch via Paynow
           </p>
         </div>
       </div>
