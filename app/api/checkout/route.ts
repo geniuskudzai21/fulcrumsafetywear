@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createPaynowClient } from "@/lib/paynow/config";
 import { logPaymentEvent } from "@/lib/paynow/log";
 import { rateLimit } from "@/lib/paynow/rate-limit";
+import { SUPPORT_EMAIL } from "@/lib/site";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { checkoutSchema } from "@/lib/validation/checkout";
 
@@ -31,7 +32,7 @@ function paynowAuthEmail(email: string) {
   const domain = at > 0 ? email.slice(at + 1) : "";
   const sanitized = local && domain ? `${local}@${domain}` : "";
 
-  return PAYNOW_EMAIL.test(sanitized) ? sanitized : "orders@example.com";
+  return PAYNOW_EMAIL.test(sanitized) ? sanitized : SUPPORT_EMAIL;
 }
 
 function checkoutErrorMessage(message?: string) {
@@ -209,8 +210,24 @@ export async function POST(request: Request) {
     }
 
     const pollUrl = response.pollUrl ?? null;
-    const instructions = response.instructions ?? null;
     const redirectUrl = response.redirectUrl ?? null;
+    const innbucks = response.innbucks_info?.[0];
+    const innbucksInfo = innbucks
+      ? {
+          code: innbucks.authorizationcode,
+          deepLink: innbucks.deep_link_url,
+          expiresAt: innbucks.expires_at,
+        }
+      : undefined;
+    const instructions =
+      response.instructions ??
+      (innbucksInfo
+        ? `InnBucks code ${innbucksInfo.code}${
+            innbucksInfo.expiresAt
+              ? ` (expires ${innbucksInfo.expiresAt})`
+              : ""
+          }`
+        : null);
 
     const { error: updateError } = await service
       .from("payments")
@@ -261,9 +278,12 @@ export async function POST(request: Request) {
         method,
         status: "pending",
         amount,
+        innbucks: innbucksInfo,
         instructions:
           instructions ??
-          "Approve the payment prompt on your phone to complete the order.",
+          (method === "inbucks"
+            ? "Open the InnBucks app and enter your payment code to approve this order."
+            : "Approve the payment prompt on your phone to complete the order."),
       },
       { status: 201 },
     );

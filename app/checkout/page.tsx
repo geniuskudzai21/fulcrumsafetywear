@@ -5,7 +5,7 @@ import ShopShell from "@/components/ShopShell";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Checkout | Fulcrum Wear",
+  title: "Checkout",
   robots: { index: false },
 };
 
@@ -23,7 +23,7 @@ export default async function CheckoutPage() {
         <p className="text-sm text-coal/60">Secure checkout</p>
         <h1 className="d text-3xl md:text-4xl mt-1">Review your order</h1>
         <p className="mt-2 text-sm text-coal/65">
-          Confirm your items and pay securely with EcoCash, OneMoney or
+          Confirm your items and pay securely with EcoCash, InnBucks or
           Zimswitch via Paynow. Your order is sent to our team once payment is
           confirmed.
         </p>

@@ -5,7 +5,7 @@ import ShopShell from "@/components/ShopShell";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Your account | Fulcrum Wear",
+  title: "Your account",
   robots: { index: false },
 };
 

@@ -4,9 +4,10 @@ import ShopShell from "@/components/ShopShell";
 import { SUPPORT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Fulcrum Wear",
+  title: "Terms of Service",
   description:
     "The terms that apply when you shop for workwear and PPE from Fulcrum Safety Wear.",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {
@@ -56,7 +57,7 @@ export default function TermsPage() {
             <h2 className="d text-lg text-coal">4. Payment</h2>
             <p className="mt-2">
               Online payments are processed securely by Paynow using EcoCash,
-              OneMoney or Zimswitch. We do not store your payment card or mobile
+              InnBucks or Zimswitch. We do not store your payment card or mobile
               money credentials on this site. Your order is prepared once Paynow
               confirms the payment.
             </p>

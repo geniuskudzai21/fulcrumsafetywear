@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import ProductOptions from "@/components/ProductOptions";
 import ShopShell from "@/components/ShopShell";
 import { getProductBySlug, getProductSlugs } from "@/lib/queries/products";
-import { SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: "Product not found | Fulcrum Wear" };
+    return { title: "Product not found" };
   }
 
   const url = `${SITE_URL}/products/${product.slug}`;
@@ -36,10 +36,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: { canonical: url },
     openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: "en_ZW",
       title: `${product.name} | Fulcrum Wear`,
       description,
       url,
-      type: "website",
       images: [{ url: product.imageUrl, alt: product.name }],
     },
     twitter: {
@@ -59,26 +61,61 @@ export default async function ProductPage({ params }: Props) {
 
   const firstVariant = product.colors.flatMap((color) => color.sizes)[0];
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    description: product.description,
-    image: [product.imageUrl],
-    sku: firstVariant?.sku ?? product.slug,
-    brand: { "@type": "Brand", name: "Fulcrum Wear" },
-    category: product.category.name,
-    offers: {
-      "@type": "Offer",
-      url: `${SITE_URL}/products/${product.slug}`,
-      priceCurrency: "USD",
-      price: product.price.toFixed(2),
-      availability: product.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      itemCondition: "https://schema.org/NewCondition",
+  const productUrl = `${SITE_URL}/products/${product.slug}`;
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "@id": `${productUrl}#product`,
+      name: product.name,
+      description: product.description,
+      image: [product.imageUrl],
+      sku: firstVariant?.sku ?? product.slug,
+      brand: { "@type": "Brand", name: SITE_NAME },
+      category: product.category.name,
+      url: productUrl,
+      offers: {
+        "@type": "Offer",
+        url: productUrl,
+        priceCurrency: "USD",
+        price: product.price.toFixed(2),
+        availability: product.inStock
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+        itemCondition: "https://schema.org/NewCondition",
+        seller: {
+          "@type": "Organization",
+          name: SITE_NAME,
+          url: SITE_URL,
+        },
+      },
     },
-  };
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: SITE_URL,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Shop",
+          item: `${SITE_URL}/#shop`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: product.name,
+          item: productUrl,
+        },
+      ],
+    },
+  ];
 
   return (
     <ShopShell>
@@ -131,7 +168,7 @@ export default async function ProductPage({ params }: Props) {
 
             <div className="mt-8 border-t border-mist pt-4 text-sm text-coal/60">
               <p>Nationwide delivery across Zimbabwe.</p>
-              <p>Pay with EcoCash, OneMoney or Zimswitch via Paynow.</p>
+              <p>Pay with EcoCash, InnBucks or Zimswitch via Paynow.</p>
             </div>
           </div>
         </div>

@@ -4,9 +4,10 @@ import ShopShell from "@/components/ShopShell";
 import { SUPPORT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Fulcrum Wear",
+  title: "Privacy Policy",
   description:
     "How Fulcrum Safety Wear collects, uses and protects your personal information.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {
@@ -82,7 +83,7 @@ export default function PrivacyPage() {
               </li>
               <li>
                 <span className="font-semibold text-coal">Paynow</span> to
-                process EcoCash, OneMoney and Zimswitch payments;
+                process EcoCash, InnBucks and Zimswitch payments;
               </li>
               <li>
                 <span className="font-semibold text-coal">Delivery partners</span>{" "}

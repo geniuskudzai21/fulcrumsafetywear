@@ -1,18 +1,20 @@
-import BrandBand from "@/components/BrandBand";
+import type { Metadata } from "next";
 import CartDrawer from "@/components/CartDrawer";
 import CheckoutForm from "@/components/CheckoutForm";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import ProductGrid from "@/components/ProductGrid";
 import QuickView from "@/components/QuickView";
+import ShopView from "@/components/ShopView";
 import { StoreProvider } from "@/components/StoreProvider";
-import TrustStrip from "@/components/TrustStrip";
 import {
   getCategories,
   getProducts,
   parseSort,
 } from "@/lib/queries/products";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -50,20 +52,15 @@ export default async function Home({
     <StoreProvider>
       <Header initialQuery={q} />
       <main id="top">
-        {!isSearching ? (
-          <>
-            <Hero />
-            <TrustStrip />
-          </>
-        ) : null}
-        <ProductGrid
+        <ShopView
+          key={`${category}:${q}:${sort}`}
           products={products}
           categories={categories}
           category={category}
           q={q}
           sort={sort}
+          isSearching={isSearching}
         />
-        {!isSearching ? <BrandBand /> : null}
       </main>
       <Footer />
       <CartDrawer />

@@ -76,7 +76,7 @@ export default function CheckoutSummary() {
         Continue to payment
       </button>
       <p className="mt-3 text-xs text-coal/60">
-        Pay securely with EcoCash, OneMoney or Zimswitch via Paynow.
+        Pay securely with EcoCash, InnBucks or Zimswitch via Paynow.
       </p>
     </div>
   );

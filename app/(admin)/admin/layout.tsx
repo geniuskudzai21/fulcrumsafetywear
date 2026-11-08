@@ -8,7 +8,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import fulcrumLogo from "@/images/logo.png";
 
 export const metadata: Metadata = {
-  title: "Admin | Fulcrum Wear",
+  title: "Admin",
   robots: { index: false },
 };
 

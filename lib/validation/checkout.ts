@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const PAYMENT_METHODS = ["ecocash", "onemoney", "zimswitch"] as const;
+export const PAYMENT_METHODS = ["ecocash", "inbucks", "zimswitch"] as const;
 
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 

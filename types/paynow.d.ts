@@ -7,6 +7,13 @@ declare module "paynow" {
     pollUrl?: string;
     instructions?: string;
     status?: string;
+    isInnbucks?: boolean;
+    innbucks_info?: {
+      authorizationcode: string;
+      deep_link_url: string;
+      qr_code: string;
+      expires_at: string;
+    }[];
   };
 
   export type PaynowStatusResponse = {

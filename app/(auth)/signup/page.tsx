@@ -3,7 +3,7 @@ import SignupForm from "@/components/auth/SignupForm";
 import { safeNext } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "Create an account | Fulcrum Wear",
+  title: "Create an account",
   robots: { index: false },
 };
 

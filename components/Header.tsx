@@ -176,7 +176,7 @@ export default function Header({
     <>
       <div className="bg-gold text-ink">
         <p className="mx-auto max-w-7xl 2xl:max-w-[90rem] px-4 py-1.5 text-center text-[11px] font-semibold tracking-wide sm:text-xs">
-          Delivery across Zimbabwe &middot; Pay with EcoCash, OneMoney or
+          Delivery across Zimbabwe &middot; Pay with EcoCash, InnBucks or
           Zimswitch
         </p>
       </div>

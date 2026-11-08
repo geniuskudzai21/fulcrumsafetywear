@@ -1,7 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import fulcrumLogo from "@/images/logo.png";
-import { SOCIAL_LINKS, SUPPORT_EMAIL } from "@/lib/site";
+import {
+  CONTACT_PHONE,
+  SOCIAL_LINKS,
+  SUPPORT_EMAIL,
+  WHATSAPP_LINK,
+} from "@/lib/site";
 
 const socials = [
   {
@@ -66,9 +71,19 @@ export default function Footer() {
         <div>
           <p className="font-bold text-white">Contact</p>
           <p className="mt-2">
-            WhatsApp: +263 77 000 0000
+            WhatsApp / Calls:{" "}
+            <a href={`tel:${CONTACT_PHONE}`} className="hover:text-gold">
+              +263 78 573 7355
+            </a>
             <br />
-            Email: {SUPPORT_EMAIL}
+            <a href={WHATSAPP_LINK} className="hover:text-gold">
+              Chat on WhatsApp
+            </a>
+            <br />
+            Email:{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-gold">
+              {SUPPORT_EMAIL}
+            </a>
             <br />
             Harare, Zimbabwe
           </p>
@@ -76,7 +91,9 @@ export default function Footer() {
         <div>
           <p className="font-bold text-white">We accept</p>
           <p className="mt-2">
-            EcoCash, OneMoney and Zimswitch via Paynow
+            EcoCash, InnBucks and Zimswitch via Paynow
+            <br />
+            EcoCash / InnBucks: +263 78 573 7355
           </p>
         </div>
       </div>

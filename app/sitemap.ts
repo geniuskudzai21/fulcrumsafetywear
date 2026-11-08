@@ -6,6 +6,7 @@ export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE_URL.replace(/\/$/, "");
+  const lastModified = new Date();
   let slugs: string[] = [];
 
   try {
@@ -17,22 +18,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: base,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: "weekly",
       priority: 1,
     },
     ...slugs.map((slug) => ({
       url: `${base}/products/${slug}`,
+      lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
     {
       url: `${base}/terms`,
+      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
       url: `${base}/privacy`,
+      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },

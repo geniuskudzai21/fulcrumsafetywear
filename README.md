@@ -55,7 +55,7 @@ In **Supabase Dashboard > Authentication > URL Configuration**:
   production URL.
 - **Redirect URLs**:
   - `http://localhost:3000/auth/callback`
-  - `https://your-domain.com/auth/callback` (production)
+  - `https://fulcrumindustrial.co.zw/auth/callback` (production)
 
 The app appends `?next=/account` or `?next=/reset-password` to the callback.
 If your project uses strict redirect matching, add
@@ -130,7 +130,7 @@ PAYNOW_AUTH_EMAIL=your-paynow-merchant-login-email
 6. Enter the email address that should receive transaction updates.
 7. Leave **Notification URL** blank. This app sends a per-transaction
    `resulturl` and `returnurl` to Paynow.
-8. Select the payment methods: **EcoCash**, **OneMoney** and **Zimswitch**.
+8. Select the payment methods: **EcoCash**, **InnBucks** and **Zimswitch**.
    Visa/Mastercard can be added too, but the checkout UI currently offers only
    those three.
 9. Click **Save**.
@@ -138,7 +138,7 @@ PAYNOW_AUTH_EMAIL=your-paynow-merchant-login-email
 11. Click **Email Key To Company Address** to receive the **Integration Key**.
     Paynow does not display it on the page. Keep it secret.
 
-The integration ID must have the payment methods selected. If EcoCash, OneMoney
+The integration ID must have the payment methods selected. If EcoCash, InnBucks
 or Zimswitch is not enabled on the integration, Paynow returns an error when
 the app tries to start that payment.
 
@@ -146,9 +146,9 @@ the app tries to start that payment.
 
 - `PAYNOW_RESULT_URL` must be a publicly reachable HTTPS URL. Paynow posts
   status updates there. Use the exact URL
-  `https://your-domain.com/api/paynow/webhook`.
+  `https://fulcrumindustrial.co.zw/api/paynow/webhook`.
 - `PAYNOW_RETURN_URL` must be
-  `https://your-domain.com/checkout/return`. The app appends
+  `https://fulcrumindustrial.co.zw/checkout/return`. The app appends
   `?payment=<payment-id>` automatically.
 - Local development needs a tunnel such as ngrok or cloudflared, because
   Paynow cannot reach `localhost`. Put the tunnel URL in both variables.
@@ -167,7 +167,7 @@ A new integration starts in test mode, so no real money moves.
 2. Set `PAYNOW_AUTH_EMAIL` to that merchant account's login email.
 3. Run the app behind a public HTTPS tunnel and set the two URL variables to
    the tunnel URLs.
-4. Use these EcoCash/OneMoney test numbers:
+4. Use these EcoCash test numbers:
 
    | Number | Result |
    | --- | --- |
@@ -178,7 +178,10 @@ A new integration starts in test mode, so no real money moves.
 
 5. For Zimswitch, the app redirects to Paynow. In test mode, choose
    **TESTING: Faked Success** and click **Make Payment**.
-6. Watch the server logs and Supabase `payments`/`orders` tables to confirm the
+6. InnBucks is not available in Paynow test mode. The checkout shows the
+   authorization code and deep link returned by Paynow, so verify it with one
+   live transaction after going live.
+7. Watch the server logs and Supabase `payments`/`orders` tables to confirm the
    webhook and stock updates.
 
 ### 5. Go live

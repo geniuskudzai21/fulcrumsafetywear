@@ -5,7 +5,7 @@ import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Choose a new password | Fulcrum Wear",
+  title: "Choose a new password",
   robots: { index: false },
 };
 

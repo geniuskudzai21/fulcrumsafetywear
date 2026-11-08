@@ -32,7 +32,7 @@ Add these in **Project → Settings → Environment Variables** for **Production
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` | Public |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `<anon key>` | Public |
-| `NEXT_PUBLIC_SITE_URL` | `https://your-domain.com` | Canonical URL for metadata/sitemap/robots |
+| `NEXT_PUBLIC_SITE_URL` | `https://fulcrumindustrial.co.zw` | Canonical URL for metadata/sitemap/robots |
 | `SUPABASE_SERVICE_ROLE_KEY` | optional | Server-only; currently **not referenced** in app code, add only if you introduce server admin ops |
 
 Important: `NEXT_PUBLIC_*` values are **inlined at build time** — changing them requires a redeploy.
@@ -46,9 +46,9 @@ Important: `NEXT_PUBLIC_*` values are **inlined at build time** — changing the
 ## 6. Supabase production configuration
 
 ### Authentication → URL Configuration
-- Site URL: `https://your-domain.com`
+- Site URL: `https://fulcrumindustrial.co.zw`
 - Redirect URLs:
-  - `https://your-domain.com/auth/callback`
+  - `https://fulcrumindustrial.co.zw/auth/callback`
   - `https://*.vercel.app/auth/callback` (preview deployments)
 
 ### Email provider
@@ -69,7 +69,7 @@ Important: `NEXT_PUBLIC_*` values are **inlined at build time** — changing the
 - Create the integration and get the ID/key: https://www.paynow.co.zw/Home/Receive
 - Full steps: https://developers.paynow.co.zw/docs/paynow/integration_generation/
 - Test mode: https://developers.paynow.co.zw/docs/paynow/test_mode/
-- Create an **Advanced Integration**, leave the Paynow Notification URL blank, and enable EcoCash, OneMoney and Zimswitch.
+- Create an **Advanced Integration**, leave the Paynow Notification URL blank, and enable EcoCash, InnBucks and Zimswitch.
 - Set `PAYNOW_INTEGRATION_ID`, `PAYNOW_INTEGRATION_KEY`, `PAYNOW_RESULT_URL` and `PAYNOW_RETURN_URL` as server-only Vercel env vars.
 - `PAYNOW_RESULT_URL` must be `https://<domain>/api/paynow/webhook` and publicly reachable.
 - `PAYNOW_RETURN_URL` must be `https://<domain>/checkout/return`.

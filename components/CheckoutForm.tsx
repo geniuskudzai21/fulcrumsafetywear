@@ -14,12 +14,19 @@ import type { PaymentMethod } from "@/lib/validation/checkout";
 import { useCartActions } from "./CartProvider";
 import { useStore } from "./StoreProvider";
 
+type InnBucksInfo = {
+  code: string;
+  deepLink?: string;
+  expiresAt?: string;
+};
+
 type CheckoutResult = {
   paymentId: string;
   reference: string;
   method: PaymentMethod;
   amount: number;
   instructions: string;
+  innbucks?: InnBucksInfo;
 };
 
 type CheckoutResponse = CheckoutResult & {
@@ -38,9 +45,9 @@ const METHODS: {
     detail: "Approve the payment prompt on your phone.",
   },
   {
-    value: "onemoney",
-    title: "OneMoney",
-    detail: "Approve the payment prompt on your phone.",
+    value: "inbucks",
+    title: "InnBucks",
+    detail: "Get an InnBucks payment code and approve it in the app.",
   },
   {
     value: "zimswitch",
@@ -48,6 +55,12 @@ const METHODS: {
     detail: "Continue to the secure Paynow payment page.",
   },
 ];
+
+const METHOD_LABELS: Record<PaymentMethod, string> = {
+  ecocash: "EcoCash",
+  inbucks: "InnBucks",
+  zimswitch: "Zimswitch",
+};
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Waiting for you to approve the payment",
@@ -138,6 +151,7 @@ export default function CheckoutForm() {
         instructions:
           body.instructions ??
           "Approve the payment prompt on your phone to complete the order.",
+        innbucks: body.innbucks,
       });
     } catch {
       setError("We could not reach the payment server. Please try again.");
@@ -178,17 +192,39 @@ export default function CheckoutForm() {
                 {paymentPaid ? "Paid" : paymentFailed ? "Failed" : "Pending"}
               </p>
               <p className="mt-1 text-sm text-coal/65">
-                {result.method === "ecocash"
-                  ? "EcoCash"
-                  : result.method === "onemoney"
-                    ? "OneMoney"
-                    : "Zimswitch"}{" "}
-                &middot; USD {Number(result.amount).toFixed(2)}
+                {METHOD_LABELS[result.method]} &middot; USD{" "}
+                {Number(result.amount).toFixed(2)}
               </p>
               <p className="mt-1 text-xs text-coal/50">
                 Reference {result.reference}
               </p>
             </div>
+
+            {result.innbucks ? (
+              <div className="rounded-xl border border-gold/50 bg-gold/10 p-4 text-sm">
+                <p className="font-bold">InnBucks payment code</p>
+                <p className="mt-2 font-mono text-2xl font-black tracking-[0.18em] text-ink">
+                  {result.innbucks.code}
+                </p>
+                {result.innbucks.expiresAt ? (
+                  <p className="mt-1 text-xs text-coal/60">
+                    Expires {result.innbucks.expiresAt}
+                  </p>
+                ) : null}
+                <p className="mt-2 text-xs text-coal/60">
+                  Open the InnBucks app and enter this code to approve the
+                  payment.
+                </p>
+                {result.innbucks.deepLink ? (
+                  <a
+                    href={result.innbucks.deepLink}
+                    className="mt-3 inline-block rounded-lg bg-ink px-4 py-2 text-xs font-bold text-gold"
+                  >
+                    Open InnBucks app
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
 
             {paymentPaid && orderCancelled ? (
               <p className="rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
@@ -346,7 +382,7 @@ export default function CheckoutForm() {
 
             {method !== "zimswitch" ? (
               <label className="block text-sm font-semibold">
-                {method === "ecocash" ? "EcoCash" : "OneMoney"} number
+                {method === "ecocash" ? "EcoCash" : "InnBucks"} number
                 <input
                   required
                   name="mobilePhone"
@@ -383,7 +419,9 @@ export default function CheckoutForm() {
                 ? "Starting payment..."
                 : method === "zimswitch"
                   ? "Continue to Paynow"
-                  : "Send payment prompt"}
+                  : method === "inbucks"
+                    ? "Get InnBucks code"
+                    : "Send payment prompt"}
             </button>
             <p className="text-xs text-coal/60">
               Payments are processed securely by Paynow. Your payment details

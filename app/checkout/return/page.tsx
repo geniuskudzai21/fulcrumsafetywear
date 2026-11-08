@@ -3,7 +3,7 @@ import PaymentReturn from "@/components/PaymentReturn";
 import ShopShell from "@/components/ShopShell";
 
 export const metadata: Metadata = {
-  title: "Payment status | Fulcrum Wear",
+  title: "Payment status",
   robots: { index: false },
 };
 

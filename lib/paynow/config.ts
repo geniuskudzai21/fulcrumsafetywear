@@ -1,5 +1,6 @@
 import "server-only";
 import { Paynow } from "paynow";
+import { SITE_URL } from "@/lib/site";
 
 type PaynowConfig = {
   integrationId: string;
@@ -19,9 +20,7 @@ function absoluteUrl(value: string, label: string): string {
 export function getPaynowConfig(): PaynowConfig {
   const integrationId = process.env.PAYNOW_INTEGRATION_ID;
   const integrationKey = process.env.PAYNOW_INTEGRATION_KEY;
-  const siteUrl = (
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-  ).replace(/\/+$/, "");
+  const siteUrl = SITE_URL;
 
   if (!integrationId || !integrationKey) {
     throw new Error(
