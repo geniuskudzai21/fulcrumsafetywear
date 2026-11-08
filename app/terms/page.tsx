@@ -137,7 +137,7 @@ export default function TermsPage() {
             <p className="mt-2">
               We may update these terms from time to time. The current version
               applies whenever you use the site. Questions about these terms?{" "}
-              <Link href="/privacy" className="font-semibold text-coal underline">
+              <Link href="/policy" className="font-semibold text-coal underline">
                 Read our Privacy Policy
               </Link>{" "}
               or email{" "}

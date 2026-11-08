@@ -110,7 +110,7 @@ export default function Footer() {
             <Link href="/terms" className="hover:text-gold">
               Terms of Service
             </Link>
-            <Link href="/privacy" className="hover:text-gold">
+            <Link href="/policy" className="hover:text-gold">
               Privacy Policy
             </Link>
           </nav>
