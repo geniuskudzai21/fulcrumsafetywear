@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import CartProductImage from "@/components/CartProductImage";
 import { cartCount, cartSubtotal, useCartStore } from "@/lib/store/cart";
 import { formatMoney } from "@/lib/money";
 import { deliveryFeeForQuantity } from "@/lib/shipping";
@@ -35,7 +35,7 @@ export default function CheckoutSummary() {
       <div className="space-y-4">
         {items.map((item) => (
           <div key={item.variantId} className="flex gap-3">
-            <Image
+            <CartProductImage
               src={item.imageUrl}
               alt=""
               width={72}

@@ -1,7 +1,7 @@
 ﻿"use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import CartProductImage from "@/components/CartProductImage";
 import { formatMoney, useCurrencyStore } from "@/lib/money";
 import { cartSubtotal, useCartStore } from "@/lib/store/cart";
 import { useCartActions } from "./CartProvider";
@@ -47,7 +47,7 @@ export default function CartDrawer() {
           items.map((item) => {
             return (
               <div key={item.variantId} className="flex gap-3">
-                <Image
+                <CartProductImage
                   src={item.imageUrl}
                   alt=""
                   width={80}
