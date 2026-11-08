@@ -3,10 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import fulcrumLogo from "@/images/logo.png";
-import { signOutAction } from "@/lib/actions/auth";
 import { cartCount, useCartStore } from "@/lib/store/cart";
+import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "./auth/AuthProvider";
 import { useStore } from "./StoreProvider";
 
@@ -97,13 +103,14 @@ export default function Header({
 }: {
   initialQuery?: string;
 }) {
-  const { openCart } = useStore();
+  const { openCart, toast } = useStore();
   const { user } = useAuth();
   const [accountOpen, setAccountOpen] = useState(false);
   const items = useCartStore((state) => state.items);
   const count = cartCount(items);
   const pathname = usePathname();
   const router = useRouter();
+  const supabase = useMemo(() => createClient(), []);
   const [query, setQuery] = useState(initialQuery);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchFocused = useRef(false);
@@ -172,6 +179,27 @@ export default function Header({
     navigateSearch("");
   }
 
+  async function logOut() {
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        toast(`Could not log out: ${error.message}`);
+        return;
+      }
+
+      setAccountOpen(false);
+      router.replace("/");
+      router.refresh();
+    } catch (error) {
+      toast(
+        error instanceof Error
+          ? `Could not log out: ${error.message}`
+          : "Could not log out. Please try again.",
+      );
+    }
+  }
+
   return (
     <>
       <div className="bg-gold text-ink">
@@ -229,14 +257,13 @@ export default function Header({
                     >
                       Account
                     </Link>
-                    <form action={signOutAction}>
-                      <button
-                        type="submit"
-                        className="w-full px-4 py-2 text-left text-sm font-semibold hover:bg-mist"
-                      >
-                        Log out
-                      </button>
-                    </form>
+                    <button
+                      type="button"
+                      onClick={() => void logOut()}
+                      className="w-full px-4 py-2 text-left text-sm font-semibold hover:bg-mist"
+                    >
+                      Log out
+                    </button>
                   </div>
                 ) : null}
               </div>

@@ -72,6 +72,16 @@ function checkoutErrorMessage(message?: string) {
   return "Checkout is temporarily unavailable. Please try again later.";
 }
 
+function providerErrorMessage(message: string | undefined) {
+  const details = message?.replace(/[\u0000-\u001f\u007f]/g, " ").trim();
+
+  if (!details) {
+    return "Paynow did not return a response. Check the server logs and confirm the Paynow integration credentials and selected payment method are configured correctly.";
+  }
+
+  return `Paynow rejected the payment: ${details.slice(0, 240)}`;
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -212,8 +222,7 @@ export async function POST(request: Request) {
 
       return NextResponse.json(
         {
-          error:
-            "Paynow could not start this payment. Please check your details and try again.",
+          error: providerErrorMessage(response?.error),
         },
         { status: 502 },
       );
@@ -311,8 +320,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        error:
-          "Paynow could not start this payment. Please check your details and try again.",
+        error: providerErrorMessage(
+          error instanceof Error ? error.message : undefined,
+        ),
       },
       { status: 502 },
     );

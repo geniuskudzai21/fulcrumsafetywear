@@ -446,16 +446,6 @@ export default function CheckoutForm() {
                     ? "Get InnBucks code"
                     : "Send payment prompt"}
             </button>
-            <p className="text-xs text-coal/60">
-              Payments are processed securely by Paynow. Your payment details
-              never reach Fulcrum&apos;s servers.
-            </p>
-            {method === "zimswitch" ? (
-              <p className="text-xs text-coal/60">
-                Zimswitch bank/card details are entered on Paynow&apos;s secure
-                page after you continue; this form does not collect them.
-              </p>
-            ) : null}
           </form>
         )}
       </div>
