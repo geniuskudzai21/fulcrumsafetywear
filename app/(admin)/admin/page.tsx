@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/admin/auth";
 import { LOW_STOCK_THRESHOLD } from "@/lib/admin/config";
 import { formatAdminMoney } from "@/lib/admin/format";
+import AdminDashboardAutoRefresh from "@/components/admin/AdminDashboardAutoRefresh";
 
 export default async function AdminDashboardPage() {
   const { supabase } = await requireAdmin();
@@ -61,6 +62,7 @@ export default async function AdminDashboardPage() {
         <p className="mt-1 text-sm text-coal/60">
           Store performance at a glance.
         </p>
+        <AdminDashboardAutoRefresh />
       </div>
 
       {statsError ? (
