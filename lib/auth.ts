@@ -16,8 +16,12 @@ export function siteOrigin(origin?: string | null): string {
   return (origin || SITE_URL).replace(/\/+$/, "");
 }
 
+export function authCallbackBase(origin?: string | null) {
+  return `${siteOrigin(origin)}/auth/callback`;
+}
+
 export function authCallbackUrl(next = "/account", origin?: string | null) {
-  return `${siteOrigin(origin)}/auth/callback?next=${encodeURIComponent(
+  return `${authCallbackBase(origin)}?next=${encodeURIComponent(
     safeNext(next),
   )}`;
 }

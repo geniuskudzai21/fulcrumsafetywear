@@ -61,6 +61,13 @@ The app appends `?next=/account` or `?next=/reset-password` to the callback.
 If your project uses strict redirect matching, add
 `http://localhost:3000/auth/callback**` and the production equivalent.
 
+Google sign-in uses the bare callback URL `https://<your-site>/auth/callback`
+and stores the return path in a short-lived cookie. If Google returns you to
+`/?code=...` instead, Supabase rejected the callback URL and fell back to the
+Site URL. Check that **Site URL** matches the environment you are testing and
+that both callback entries above are in **Redirect URLs**, including the `**`
+wildcard form if matching is strict.
+
 In **Authentication > Providers > Email**:
 
 - Enable email sign-in.

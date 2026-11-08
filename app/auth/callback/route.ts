@@ -1,11 +1,21 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { safeNext, siteOrigin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
+function redirectWithCleanup(url: string) {
+  const response = NextResponse.redirect(url);
+  response.cookies.delete("fw-auth-next");
+  return response;
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
+  const cookieStore = await cookies();
   const code = searchParams.get("code");
-  const next = safeNext(searchParams.get("next"));
+  const next = safeNext(
+    searchParams.get("next") ?? cookieStore.get("fw-auth-next")?.value,
+  );
   const providerError =
     searchParams.get("error_description") ?? searchParams.get("error");
 
@@ -26,18 +36,18 @@ export async function GET(request: Request) {
           .maybeSingle();
 
         if (profile?.role === "admin") {
-          return NextResponse.redirect(`${siteOrigin(origin)}/admin`);
+          return redirectWithCleanup(`${siteOrigin(origin)}/admin`);
         }
       }
 
-      return NextResponse.redirect(`${siteOrigin(origin)}${next}`);
+      return redirectWithCleanup(`${siteOrigin(origin)}${next}`);
     }
   }
 
   const message =
     providerError ?? "We could not sign you in. Please try again.";
 
-  return NextResponse.redirect(
+  return redirectWithCleanup(
     `${siteOrigin(origin)}/login?error=${encodeURIComponent(message)}`,
   );
 }

@@ -12,6 +12,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const pathname = request.nextUrl.pathname;
+  const oauthCode = request.nextUrl.searchParams.get("code");
+  const oauthError =
+    request.nextUrl.searchParams.get("error") ??
+    request.nextUrl.searchParams.get("error_description");
+
+  // If Supabase falls back to the Site URL instead of the allowlisted callback,
+  // the OAuth code lands on the home page. Forward it to the callback route so
+  // the session can be exchanged or the error can be shown.
+  if ((oauthCode || oauthError) && pathname !== "/auth/callback") {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = "/auth/callback";
+    return NextResponse.redirect(callbackUrl);
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient<Database>(url, anonKey, {
@@ -35,7 +50,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
   const needsAuth = PROTECTED_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
@@ -55,5 +69,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/checkout/:path*"],
+  matcher: ["/", "/account/:path*", "/checkout/:path*"],
 };

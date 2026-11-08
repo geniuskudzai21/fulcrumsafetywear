@@ -1,9 +1,9 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { authCallbackUrl, safeNext } from "@/lib/auth";
+import { authCallbackBase, authCallbackUrl, safeNext } from "@/lib/auth";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -160,11 +160,26 @@ export async function signupAction(
 
 export async function googleAction(formData: FormData): Promise<void> {
   const next = safeNext(formData.get("next"));
+  const requestOrigin = await origin();
+  const cookieStore = await cookies();
+
+  // Keep the return path in a cookie instead of a query string so the OAuth
+  // redirect URL exactly matches the Supabase allowlist entry.
+  cookieStore.set("fw-auth-next", next, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure:
+      requestOrigin?.startsWith("https://") ??
+      process.env.NODE_ENV === "production",
+    maxAge: 600,
+    path: "/",
+  });
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: authCallbackUrl(next, await origin()),
+      redirectTo: authCallbackBase(requestOrigin),
       skipBrowserRedirect: true,
     },
   });
