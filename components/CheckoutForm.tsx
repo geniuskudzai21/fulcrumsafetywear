@@ -13,6 +13,7 @@ import { cartCount, cartSubtotal, useCartStore } from "@/lib/store/cart";
 import { deliveryFeeForQuantity } from "@/lib/shipping";
 import type { PaymentMethod } from "@/lib/validation/checkout";
 import { useCartActions } from "./CartProvider";
+import PaymentMethodIcon from "./PaymentMethodIcon";
 import { useStore } from "./StoreProvider";
 
 type InnBucksInfo = {
@@ -376,8 +377,10 @@ export default function CheckoutForm() {
                       value={option.value}
                       checked={method === option.value}
                       onChange={() => setMethod(option.value)}
+                      className="mt-1"
                     />
-                    <span>
+                    <PaymentMethodIcon method={option.value} />
+                    <span className="flex-1">
                       <span className="block font-semibold">
                         {option.title}
                       </span>
