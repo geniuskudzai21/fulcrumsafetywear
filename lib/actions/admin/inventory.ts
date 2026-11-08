@@ -18,12 +18,15 @@ export async function updateVariantStockAction(input: {
     };
   }
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("variants")
     .update({ stock: parsed.data.stock })
-    .eq("id", parsed.data.variantId);
+    .eq("id", parsed.data.variantId)
+    .select("id")
+    .maybeSingle();
 
   if (error) return { ok: false, error: error.message };
+  if (!data) return { ok: false, error: "Inventory item was not found." };
 
   revalidatePath("/admin");
   revalidatePath("/admin/inventory");

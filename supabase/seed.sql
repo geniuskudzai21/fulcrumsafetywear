@@ -1,5 +1,6 @@
 -- seed.sql
--- Catalogue data derived from lib/data/products.ts.
+-- Catalogue-only data derived from lib/data/products.ts. This does not create
+-- customer accounts, carts, orders, or payments.
 -- Idempotent: re-running only inserts rows that are missing.
 
 insert into public.categories (name, slug)

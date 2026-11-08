@@ -9,7 +9,8 @@ import {
 } from "react";
 import { usePaymentStatus } from "@/lib/hooks/usePaymentStatus";
 import { formatMoney } from "@/lib/money";
-import { cartSubtotal, useCartStore } from "@/lib/store/cart";
+import { cartCount, cartSubtotal, useCartStore } from "@/lib/store/cart";
+import { deliveryFeeForQuantity } from "@/lib/shipping";
 import type { PaymentMethod } from "@/lib/validation/checkout";
 import { useCartActions } from "./CartProvider";
 import { useStore } from "./StoreProvider";
@@ -25,6 +26,7 @@ type CheckoutResult = {
   reference: string;
   method: PaymentMethod;
   amount: number;
+  deliveryFee: number;
   instructions: string;
   innbucks?: InnBucksInfo;
 };
@@ -52,7 +54,8 @@ const METHODS: {
   {
     value: "zimswitch",
     title: "Zimswitch",
-    detail: "Continue to the secure Paynow payment page.",
+    detail:
+      "Continue to Paynow's secure page to enter your Zimswitch payment details.",
   },
 ];
 
@@ -82,6 +85,9 @@ export default function CheckoutForm() {
     result?.paymentId ?? null,
     Boolean(result),
   );
+  const itemCount = cartCount(items);
+  const subtotal = cartSubtotal(items);
+  const deliveryFee = deliveryFeeForQuantity(itemCount);
 
   useEffect(() => {
     if (payment.data?.status !== "paid" || clearedRef.current) return;
@@ -148,6 +154,7 @@ export default function CheckoutForm() {
         reference: body.reference,
         method: body.method,
         amount: body.amount,
+        deliveryFee: body.deliveryFee,
         instructions:
           body.instructions ??
           "Approve the payment prompt on your phone to complete the order.",
@@ -194,6 +201,9 @@ export default function CheckoutForm() {
               <p className="mt-1 text-sm text-coal/65">
                 {METHOD_LABELS[result.method]} &middot; USD{" "}
                 {Number(result.amount).toFixed(2)}
+              </p>
+              <p className="mt-1 text-xs text-coal/55">
+                Includes {formatMoney(result.deliveryFee, "USD")} delivery.
               </p>
               <p className="mt-1 text-xs text-coal/50">
                 Reference {result.reference}
@@ -397,9 +407,22 @@ export default function CheckoutForm() {
               </label>
             ) : null}
 
-            <div className="flex justify-between border-t border-mist pt-4 text-lg font-bold">
-              <span>Total</span>
-              <span>{formatMoney(cartSubtotal(items), "USD")}</span>
+            <div className="space-y-2 border-t border-mist pt-4 text-sm">
+              <div className="flex justify-between">
+                <span>Items subtotal</span>
+                <span>{formatMoney(subtotal, "USD")}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery ({itemCount} items)</span>
+                <span>{formatMoney(deliveryFee, "USD")}</span>
+              </div>
+              <p className="text-xs text-coal/60">
+                Delivery is $5, with 50% off for orders of 6 or more items.
+              </p>
+              <div className="flex justify-between border-t border-mist pt-3 text-lg font-bold">
+                <span>Total</span>
+                <span>{formatMoney(subtotal + deliveryFee, "USD")}</span>
+              </div>
             </div>
 
             {error ? (
@@ -427,6 +450,12 @@ export default function CheckoutForm() {
               Payments are processed securely by Paynow. Your payment details
               never reach Fulcrum&apos;s servers.
             </p>
+            {method === "zimswitch" ? (
+              <p className="text-xs text-coal/60">
+                Zimswitch bank/card details are entered on Paynow&apos;s secure
+                page after you continue; this form does not collect them.
+              </p>
+            ) : null}
           </form>
         )}
       </div>

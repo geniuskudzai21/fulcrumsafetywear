@@ -78,7 +78,7 @@ Important: `NEXT_PUBLIC_*` values are **inlined at build time** — changing the
 - Run the test checklist in `README.md` against the Paynow test integration before going live.
 
 ## 7. Database setup
-1. Apply migrations in order (`001` → `006`) via Supabase SQL Editor, or `supabase link` + `supabase db push`.
+1. Apply migrations in order (`001` → `008`) via Supabase SQL Editor, or `supabase link` + `supabase db push`. This includes the Paynow and delivery-fee migrations required by checkout.
 2. Seed catalogue (fresh project): run `supabase/seed.sql`.
 3. Create the admin user (sign up first), then run `supabase/make_admin.sql` with the real email.
 4. Verify RLS is enabled and policies exist.

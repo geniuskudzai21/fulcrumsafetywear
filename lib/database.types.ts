@@ -167,6 +167,7 @@ export type Database = {
           city: string
           created_at: string
           currency: string
+          delivery_fee: number
           id: string
           name: string
           payment_method: string
@@ -180,6 +181,7 @@ export type Database = {
           city: string
           created_at?: string
           currency?: string
+          delivery_fee?: number
           id?: string
           name: string
           payment_method: string
@@ -193,6 +195,7 @@ export type Database = {
           city?: string
           created_at?: string
           currency?: string
+          delivery_fee?: number
           id?: string
           name?: string
           payment_method?: string
@@ -458,6 +461,25 @@ export type Database = {
         }
         Returns: {
           currency: string
+          order_id: string
+          payment_id: string
+          total: number
+        }[]
+      }
+      create_paynow_order_with_delivery: {
+        Args: {
+          p_address: string
+          p_city: string
+          p_items: Json
+          p_method: string
+          p_name: string
+          p_phone: string
+          p_reference: string
+          p_user_id: string
+        }
+        Returns: {
+          currency: string
+          delivery_fee: number
           order_id: string
           payment_id: string
           total: number

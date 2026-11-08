@@ -2,13 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { cartSubtotal, useCartStore } from "@/lib/store/cart";
+import { cartCount, cartSubtotal, useCartStore } from "@/lib/store/cart";
 import { formatMoney } from "@/lib/money";
+import { deliveryFeeForQuantity } from "@/lib/shipping";
 import { useStore } from "./StoreProvider";
 
 export default function CheckoutSummary() {
   const items = useCartStore((state) => state.items);
   const { openCheckout } = useStore();
+  const subtotal = cartSubtotal(items);
+  const deliveryFee = deliveryFeeForQuantity(cartCount(items));
 
   if (!items.length) {
     return (
@@ -60,12 +63,25 @@ export default function CheckoutSummary() {
         ))}
       </div>
 
-      <div className="mt-6 flex justify-between border-t border-mist pt-4 text-lg font-bold">
-        <span>Subtotal</span>
-        <span>{formatMoney(cartSubtotal(items), "USD")}</span>
+      <div className="mt-6 space-y-2 border-t border-mist pt-4 text-sm">
+        <div className="flex justify-between">
+          <span>Items subtotal</span>
+          <span>{formatMoney(subtotal, "USD")}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Delivery ({cartCount(items)} items)</span>
+          <span>{formatMoney(deliveryFee, "USD")}</span>
+        </div>
+        <p className="text-xs text-coal/60">
+          Delivery is $5, with 50% off for orders of 6 or more items.
+        </p>
+        <div className="flex justify-between border-t border-mist pt-3 text-lg font-bold">
+          <span>Total</span>
+          <span>{formatMoney(subtotal + deliveryFee, "USD")}</span>
+        </div>
       </div>
       <p className="mt-1 text-xs text-coal/60">
-        Delivery is confirmed by city before payment. Paynow charges in USD.
+        Paynow charges in USD.
       </p>
 
       <button

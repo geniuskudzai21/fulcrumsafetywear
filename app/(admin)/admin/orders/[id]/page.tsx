@@ -36,6 +36,7 @@ type OrderDetail = {
   user_id: string | null;
   status: string;
   total: number | string;
+  delivery_fee: number | string;
   currency: string;
   name: string;
   phone: string;
@@ -53,7 +54,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
   const { data: order } = await supabase
     .from("orders")
     .select(
-      "id, user_id, status, total, currency, name, phone, city, address, payment_method, created_at, order_items(id, qty, unit_price, variant:variants(id, color_name, color_hex, size, sku, product:products(id, name, slug)))",
+      "id, user_id, status, total, delivery_fee, currency, name, phone, city, address, payment_method, created_at, order_items(id, qty, unit_price, variant:variants(id, color_name, color_hex, size, sku, product:products(id, name, slug)))",
     )
     .eq("id", id)
     .maybeSingle()
@@ -175,6 +176,14 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                   </td>
                   <td className="px-4 py-3 text-right font-semibold">
                     {formatAdminMoney(subtotal, order.currency)}
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={5} className="px-4 py-3 text-right font-semibold">
+                    Delivery
+                  </td>
+                  <td className="px-4 py-3 text-right font-semibold">
+                    {formatAdminMoney(order.delivery_fee, order.currency)}
                   </td>
                 </tr>
                 <tr>

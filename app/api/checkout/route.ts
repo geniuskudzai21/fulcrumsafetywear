@@ -37,7 +37,16 @@ function paynowAuthEmail(email: string) {
 
 function checkoutErrorMessage(message?: string) {
   if (!message) {
-    return "We could not start checkout. Please review your cart and try again.";
+    return "Checkout is temporarily unavailable. Please try again later.";
+  }
+
+  const normalizedMessage = message.toLowerCase();
+
+  if (
+    normalizedMessage.includes("create_paynow_order_with_delivery") ||
+    normalizedMessage.includes("schema cache")
+  ) {
+    return "Checkout setup is incomplete. Please contact support.";
   }
 
   if (message.includes("Insufficient stock")) {
@@ -60,7 +69,7 @@ function checkoutErrorMessage(message?: string) {
     return "We could not calculate your order total. Please try again.";
   }
 
-  return "We could not start checkout. Please review your cart and try again.";
+  return "Checkout is temporarily unavailable. Please try again later.";
 }
 
 export async function POST(request: Request) {
@@ -129,7 +138,7 @@ export async function POST(request: Request) {
   const service = createServiceClient();
 
   const { data: created, error: createError } = await service.rpc(
-    "create_paynow_order",
+    "create_paynow_order_with_delivery",
     {
       p_user_id: user.id,
       p_reference: reference,
@@ -158,6 +167,7 @@ export async function POST(request: Request) {
   }
 
   const amount = Number(order.total);
+  const deliveryFee = Number(order.delivery_fee);
 
   async function failPayment(reason: string) {
     const { error } = await service.rpc("finalize_paynow_payment", {
@@ -264,6 +274,7 @@ export async function POST(request: Request) {
           method,
           status: "pending",
           amount,
+          deliveryFee,
           redirectUrl,
         },
         { status: 201 },
@@ -278,6 +289,7 @@ export async function POST(request: Request) {
         method,
         status: "pending",
         amount,
+        deliveryFee,
         innbucks: innbucksInfo,
         instructions:
           instructions ??

@@ -13,8 +13,9 @@ export default function StockEditor({
 }) {
   const { toast } = useStore();
   const [value, setValue] = useState(String(stock));
+  const [savedStock, setSavedStock] = useState(stock);
   const [pending, startTransition] = useTransition();
-  const dirty = Number(value) !== stock;
+  const dirty = Number(value) !== savedStock;
 
   function save() {
     startTransition(async () => {
@@ -28,6 +29,7 @@ export default function StockEditor({
         return;
       }
 
+      setSavedStock(Number(value));
       toast(result.message ?? "Stock updated.");
     });
   }
@@ -47,7 +49,7 @@ export default function StockEditor({
         type="button"
         onClick={save}
         disabled={pending || !dirty || value === ""}
-        className="rounded bg-ink px-3 py-1.5 text-xs font-bold text-gold disabled:opacity-40"
+        className="rounded bg-ink px-3 py-1.5 text-xs font-bold text-gold transition-colors hover:bg-coal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:bg-mist disabled:text-coal/70"
       >
         {pending ? "Saving..." : "Save"}
       </button>

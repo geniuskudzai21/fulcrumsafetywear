@@ -30,11 +30,15 @@ accounts, and a cart that syncs across devices.
    The auth and cart features only use the anon key plus the signed-in user's
    cookies.
 
-3. Apply the SQL migrations in `supabase/migrations/` to your database in
-   numeric order, through `006_paynow_payments.sql`.
+3. Apply every SQL migration in `supabase/migrations/` to your database in
+   numeric order, through the latest migration (`008_order_delivery_fee.sql`).
 
 4. To preview the storefront with sample products, run `supabase/seed.sql` in
    the Supabase SQL Editor.
+   The seed script adds catalogue data only; it does not create customers or
+   orders. To remove unrecognized customer accounts and orders while keeping
+   the three named customers and admins, review and run
+   `supabase/cleanup_unrecognized_customers.sql` after taking a database backup.
 
 5. Create your first customer account, then replace `you@example.com` in
    `supabase/make_admin.sql` with that account's email and run the script in the
@@ -92,6 +96,10 @@ In **Authentication > Providers > Email**:
    allowlist.
 
 ## Paynow setup
+
+Checkout adds a flat $5 USD delivery fee, reduced to $2.50 for orders of six
+or more items. The fee is included in the Paynow amount and saved with the
+order.
 
 ### Which link do I visit?
 
