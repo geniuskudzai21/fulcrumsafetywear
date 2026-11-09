@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CustomerDeleteButton from "@/components/admin/CustomerDeleteButton";
 import { requireAdmin } from "@/lib/admin/auth";
 import { formatAdminDate } from "@/lib/admin/format";
 
@@ -83,6 +84,7 @@ export default async function AdminCustomersPage({
               <th className="px-4 py-3 font-semibold">Email</th>
               <th className="px-4 py-3 font-semibold">Joined</th>
               <th className="px-4 py-3 text-right font-semibold">Orders</th>
+              <th className="px-4 py-3 text-right font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -101,11 +103,21 @@ export default async function AdminCustomersPage({
                   <td className="px-4 py-3 text-right font-semibold">
                     {customer.order_count}
                   </td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end">
+                      <CustomerDeleteButton
+                        customerId={customer.id}
+                        customerName={
+                          customer.full_name || customer.email || ""
+                        }
+                      />
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-coal/60">
+                <td colSpan={5} className="px-4 py-10 text-center text-coal/60">
                   {q ? "No customers match this search." : "No customers yet."}
                 </td>
               </tr>
