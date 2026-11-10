@@ -31,7 +31,7 @@ accounts, and a cart that syncs across devices.
    cookies.
 
 3. Apply every SQL migration in `supabase/migrations/` to your database in
-   numeric order, through the latest migration (`008_order_delivery_fee.sql`).
+   numeric order, through the latest migration (`009_add_dresses_category.sql`).
 
 4. To preview the storefront with sample products, run `supabase/seed.sql` in
    the Supabase SQL Editor.

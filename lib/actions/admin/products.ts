@@ -4,7 +4,12 @@ import type { Json } from "@/lib/database.types";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/auth";
 import { slugify } from "@/lib/admin/format";
-import { adminImageSchema, adminProductSchema } from "@/lib/admin/validation";
+import {
+  adminImageSchema,
+  adminProductColorsSchema,
+  adminProductSchema,
+  adminProductSizesSchema,
+} from "@/lib/admin/validation";
 
 export type ProductFormState = {
   error?: string;
@@ -84,28 +89,110 @@ export async function saveProductAction(
   }
 
   if (!variants.length) {
-    const rawStock = formData.get("initialStock");
-    const stock = Number(rawStock ?? 0);
-
-    if (!Number.isInteger(stock) || stock < 0 || stock > 1_000_000) {
-      return { fieldErrors: { initialStock: "Enter a valid stock quantity." } };
-    }
-
     const name = String(formData.get("name") ?? "").trim();
     const slug =
       slugify(String(formData.get("slug") ?? "").trim() || name) || "product";
 
-    variants = [
-      {
-        id: "",
-        colorName: "Standard",
-        colorHex: "#000000",
-        size: "One Size",
-        sku: `${slug.slice(0, 60)}-${crypto.randomUUID().slice(0, 8)}`,
-        stock,
-        priceOverride: null,
-      },
-    ];
+    if (editingProductId) {
+      const rawStock = formData.get("initialStock");
+      const stock = Number(rawStock ?? 0);
+
+      if (!Number.isInteger(stock) || stock < 0 || stock > 1_000_000) {
+        return {
+          fieldErrors: { initialStock: "Enter a valid stock quantity." },
+        };
+      }
+
+      variants = [
+        {
+          id: "",
+          colorName: "Standard",
+          colorHex: "#000000",
+          size: "One Size",
+          sku: `${slug.slice(0, 60)}-${crypto.randomUUID().slice(0, 8)}`,
+          stock,
+          priceOverride: null,
+        },
+      ];
+    } else {
+      let rawColors: unknown;
+
+      try {
+        rawColors = JSON.parse(String(formData.get("colors") ?? "[]"));
+      } catch {
+        return { fieldErrors: { variants: "Choose valid product colours." } };
+      }
+
+      const colorsResult = adminProductColorsSchema.safeParse(rawColors);
+      if (!colorsResult.success) {
+        return {
+          fieldErrors: {
+            variants:
+              colorsResult.error.issues[0]?.message ??
+              "Choose valid product colours.",
+          },
+        };
+      }
+
+      const sizesResult = adminProductSizesSchema.safeParse(
+        formData.getAll("sizes").map(String),
+      );
+      if (!sizesResult.success) {
+        return {
+          fieldErrors: {
+            variants:
+              sizesResult.error.issues[0]?.message ??
+              "Choose at least one size.",
+          },
+        };
+      }
+
+      const colors = colorsResult.data;
+      const sizes = sizesResult.data;
+      if (colors.length * sizes.length > 100) {
+        return {
+          fieldErrors: {
+            variants: "Choose fewer colour and size combinations.",
+          },
+        };
+      }
+
+      for (const color of colors) {
+        for (const size of sizes) {
+          const colorKey = color.hex.slice(1).toLowerCase();
+          const sizeKey = size.toLowerCase().replace(/[^a-z0-9]/g, "-");
+          const rawStock = formData.get(`stock_${colorKey}_${sizeKey}`);
+          const stock = Number(rawStock);
+
+          if (
+            rawStock === null ||
+            rawStock === "" ||
+            !Number.isInteger(stock) ||
+            stock < 0 ||
+            stock > 1_000_000
+          ) {
+            return {
+              fieldErrors: {
+                variants: `Enter a valid stock quantity for ${color.name}, ${size}.`,
+              },
+            };
+          }
+
+          const colorKeyForSku =
+            slugify(color.name).slice(0, 12) || colorKey.slice(0, 12);
+          const sizeKeyForSku = slugify(size).slice(0, 8) || "size";
+          variants.push({
+            id: "",
+            colorName: color.name,
+            colorHex: color.hex,
+            size,
+            sku: `${slug.slice(0, 40)}-${colorKeyForSku}-${sizeKeyForSku}-${crypto.randomUUID().slice(0, 8)}`,
+            stock,
+            priceOverride: null,
+          });
+        }
+      }
+    }
   }
 
   const parsed = adminProductSchema.safeParse({

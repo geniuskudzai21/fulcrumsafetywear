@@ -15,9 +15,29 @@ import {
   saveProductAction,
   type ProductFormState,
 } from "@/lib/actions/admin/products";
+import {
+  ADMIN_PRODUCT_SIZES,
+  adminProductColorsSchema,
+} from "@/lib/admin/validation";
 import { slugify } from "@/lib/admin/format";
 
 type Category = { id: string; name: string };
+type ProductColor = { name: string; hex: string };
+
+const COLOR_PRESETS: ProductColor[] = [
+  { name: "Black", hex: "#171717" },
+  { name: "White", hex: "#FFFFFF" },
+  { name: "Navy", hex: "#17234A" },
+  { name: "Royal blue", hex: "#1D4ED8" },
+  { name: "Sky blue", hex: "#7CC4F0" },
+  { name: "Red", hex: "#E5242B" },
+  { name: "Green", hex: "#228B22" },
+  { name: "Yellow", hex: "#F7E015" },
+  { name: "Orange", hex: "#FF6A1A" },
+  { name: "Grey", hex: "#6B7280" },
+  { name: "Brown", hex: "#8B5E3C" },
+  { name: "Pink", hex: "#FF6FB5" },
+];
 
 type ProductInitial = {
   id: string | null;
@@ -50,6 +70,16 @@ export default function ProductForm({
   const [slugTouched, setSlugTouched] = useState(Boolean(product.slug));
   const [removeImage, setRemoveImage] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [selectedColors, setSelectedColors] = useState<ProductColor[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([
+    "S",
+    "M",
+    "L",
+    "XL",
+  ]);
+  const [customColorName, setCustomColorName] = useState("");
+  const [customColorHex, setCustomColorHex] = useState("#1769AA");
+  const [colorPickerError, setColorPickerError] = useState<string | null>(null);
   const previewUrl = useRef<string | null>(null);
 
   useEffect(() => {
@@ -95,6 +125,68 @@ export default function ProductForm({
     setRemoveImage(false);
   }
 
+  function toggleColor(color: ProductColor) {
+    if (selectedColors.some((selected) => selected.hex === color.hex)) {
+      setSelectedColors((current) =>
+        current.filter((selected) => selected.hex !== color.hex),
+      );
+      setColorPickerError(null);
+      return;
+    }
+
+    if (selectedColors.length >= 16) {
+      setColorPickerError("You can select up to 16 colours.");
+      return;
+    }
+
+    setSelectedColors((current) => [...current, color]);
+    setColorPickerError(null);
+  }
+
+  function addCustomColor() {
+    const parsedColor = adminProductColorsSchema.safeParse([
+      { name: customColorName, hex: customColorHex },
+    ]);
+
+    if (!parsedColor.success) {
+      setColorPickerError("Enter a colour name and choose a valid swatch.");
+      return;
+    }
+
+    if (selectedColors.length >= 16) {
+      setColorPickerError("You can select up to 16 colours.");
+      return;
+    }
+
+    if (
+      selectedColors.some(
+        (color) =>
+          color.name.toLowerCase() === customColorName.trim().toLowerCase() ||
+          color.hex.toLowerCase() === customColorHex.toLowerCase(),
+      )
+    ) {
+      setColorPickerError("That colour name or swatch is already selected.");
+      return;
+    }
+
+    setSelectedColors((current) => [...current, parsedColor.data[0]]);
+    setCustomColorName("");
+    setColorPickerError(null);
+  }
+
+  function toggleSize(size: string) {
+    setSelectedSizes((current) => {
+      if (size === "One Size") {
+        return current.includes(size) ? [] : [size];
+      }
+
+      const apparelSizes = current.filter((item) => item !== "One Size");
+      return apparelSizes.includes(size)
+        ? apparelSizes.filter((item) => item !== size)
+        : [...apparelSizes, size];
+    });
+  }
+
   const currentImage = removeImage ? "/images/logo2.jpeg" : preview ?? imageUrl;
 
   return (
@@ -105,6 +197,18 @@ export default function ProductForm({
         name="currentImagePath"
         value={product.imagePath}
       />
+      {!product.id ? (
+        <>
+          <input
+            type="hidden"
+            name="colors"
+            value={JSON.stringify(selectedColors)}
+          />
+          {selectedSizes.map((size) => (
+            <input key={size} type="hidden" name="sizes" value={size} />
+          ))}
+        </>
+      ) : null}
 
       {state.error ? (
         <p
@@ -183,24 +287,6 @@ export default function ProductForm({
             />
           </label>
 
-          {product.id ? null : (
-            <label className="block text-sm font-semibold">
-              Stock
-              <input
-                name="initialStock"
-                type="number"
-                min="0"
-                step="1"
-                defaultValue={0}
-                required
-                className="mt-1 w-full rounded border border-steel px-3 py-2 font-normal"
-              />
-              <span className="mt-1 block text-xs font-normal text-coal/50">
-                You can change stock later on the Inventory page.
-              </span>
-            </label>
-          )}
-
           <label className="block text-sm font-semibold">
             Tag
             <input
@@ -232,6 +318,185 @@ export default function ProductForm({
           </label>
         </div>
       </section>
+
+      {!product.id ? (
+        <section className="rounded-xl border border-mist bg-white p-5">
+          <h2 className="d text-lg">Colours, sizes and stock</h2>
+          <p className="mt-1 text-sm text-coal/60">
+            Select one or more colours and sizes, then enter stock for each
+            combination.
+          </p>
+
+          <fieldset className="mt-4">
+            <legend className="text-sm font-semibold">Colours</legend>
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {COLOR_PRESETS.map((color) => {
+                const isSelected = selectedColors.some(
+                  (selected) => selected.hex === color.hex,
+                );
+
+                return (
+                  <button
+                    key={color.hex}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => toggleColor(color)}
+                    className={`flex items-center gap-2 rounded border p-2 text-left text-sm ${
+                      isSelected
+                        ? "border-ink bg-mist/50"
+                        : "border-steel"
+                    }`}
+                  >
+                    <span
+                      className="h-5 w-5 shrink-0 rounded-full border border-black/20"
+                      style={{ backgroundColor: color.hex }}
+                    />
+                    {color.name}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-end gap-3">
+              <label className="block text-sm font-semibold">
+                Custom colour name
+                <input
+                  value={customColorName}
+                  onChange={(event) => setCustomColorName(event.target.value)}
+                  maxLength={60}
+                  className="mt-1 block rounded border border-steel px-3 py-2 font-normal"
+                />
+              </label>
+              <label className="block text-sm font-semibold">
+                Pick a colour
+                <input
+                  type="color"
+                  value={customColorHex}
+                  onChange={(event) => setCustomColorHex(event.target.value)}
+                  className="mt-1 block h-10 w-16 cursor-pointer rounded border border-steel p-1"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={addCustomColor}
+                disabled={!customColorName.trim() || selectedColors.length >= 16}
+                className="rounded border border-steel px-4 py-2 text-sm font-semibold disabled:opacity-50"
+              >
+                Add colour
+              </button>
+            </div>
+            {colorPickerError ? (
+              <p className="mt-2 text-sm text-red-700" role="alert">
+                {colorPickerError}
+              </p>
+            ) : null}
+
+            {selectedColors.length ? (
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {selectedColors.map((color) => (
+                  <li
+                    key={`${color.name}-${color.hex}`}
+                    className="flex items-center gap-2 rounded-full border border-steel px-3 py-1 text-sm"
+                  >
+                    <span
+                      className="h-4 w-4 rounded-full border border-black/20"
+                      style={{ backgroundColor: color.hex }}
+                    />
+                    {color.name}
+                    <button
+                      type="button"
+                      onClick={() => toggleColor(color)}
+                      aria-label={`Remove ${color.name}`}
+                      className="ml-1 font-bold"
+                    >
+                      &times;
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-xs text-coal/55">
+                Select at least one colour.
+              </p>
+            )}
+          </fieldset>
+
+          <fieldset className="mt-5">
+            <legend className="text-sm font-semibold">Sizes</legend>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {ADMIN_PRODUCT_SIZES.map((size) => (
+                <label
+                  key={size}
+                  className="flex items-center gap-2 rounded border border-steel px-3 py-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedSizes.includes(size)}
+                    onChange={() => toggleSize(size)}
+                  />
+                  {size}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          {selectedColors.length && selectedSizes.length ? (
+            <div className="mt-5 space-y-4">
+              {selectedColors.map((color) => (
+                <fieldset
+                  key={`${color.name}-${color.hex}`}
+                  className="rounded-lg border border-mist p-3"
+                >
+                  <legend className="px-1 text-sm font-semibold">
+                    {color.name} stock
+                  </legend>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {selectedSizes.map((size) => {
+                      const colorKey = color.hex.slice(1).toLowerCase();
+                      const sizeKey = size
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]/g, "-");
+
+                      return (
+                        <label
+                          key={size}
+                          className="block text-xs font-semibold"
+                        >
+                          {size}
+                          <input
+                            name={`stock_${colorKey}_${sizeKey}`}
+                            type="number"
+                            min="0"
+                            max="1000000"
+                            step="1"
+                            defaultValue={0}
+                            required
+                            className="mt-1 w-full rounded border border-steel px-3 py-2 text-sm font-normal"
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              ))}
+            </div>
+          ) : null}
+
+          {state.fieldErrors?.variants ? (
+            <p className="mt-3 text-sm text-red-700" role="alert">
+              {state.fieldErrors.variants}
+            </p>
+          ) : null}
+        </section>
+      ) : (
+        <section className="rounded-xl border border-mist bg-white p-5">
+          <h2 className="d text-lg">Product variants</h2>
+          <p className="mt-1 text-sm text-coal/60">
+            Existing colour and size variants are preserved when you edit this
+            product. Update their stock on the Inventory page.
+          </p>
+        </section>
+      )}
 
       <section className="rounded-xl border border-mist bg-white p-5">
         <h2 className="d text-lg">Product image</h2>

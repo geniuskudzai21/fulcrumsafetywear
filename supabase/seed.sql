@@ -6,6 +6,7 @@
 insert into public.categories (name, slug)
 values
   ('Shirts', 'shirts'),
+  ('Dresses', 'dresses'),
   ('Hi-Vis', 'hi-vis'),
   ('Trousers', 'trousers'),
   ('Sets', 'sets'),

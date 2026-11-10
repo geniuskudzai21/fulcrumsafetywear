@@ -6,6 +6,52 @@ const optionalNumber = z.preprocess(
   z.coerce.number().min(0, "Price cannot be negative.").nullable(),
 );
 
+export const ADMIN_PRODUCT_SIZES = [
+  "XS",
+  "S",
+  "M",
+  "L",
+  "XL",
+  "2XL",
+  "3XL",
+  "One Size",
+] as const;
+
+export const adminProductColorsSchema = z
+  .array(
+    z.object({
+      name: z.string().trim().min(1).max(60),
+      hex: z.string().trim().regex(/^#[0-9a-fA-F]{6}$/),
+    }),
+  )
+  .min(1, "Choose at least one colour.")
+  .max(16, "Choose no more than 16 colours.")
+  .superRefine((colors, context) => {
+    const names = new Set<string>();
+    const hexValues = new Set<string>();
+
+    colors.forEach((color, index) => {
+      const name = color.name.toLowerCase();
+      const hex = color.hex.toLowerCase();
+
+      if (names.has(name) || hexValues.has(hex)) {
+        context.addIssue({
+          code: "custom",
+          path: [index],
+          message: "Each colour name and swatch must be unique.",
+        });
+      }
+
+      names.add(name);
+      hexValues.add(hex);
+    });
+  });
+
+export const adminProductSizesSchema = z
+  .array(z.enum(ADMIN_PRODUCT_SIZES))
+  .min(1, "Choose at least one size.")
+  .max(ADMIN_PRODUCT_SIZES.length);
+
 export const adminVariantSchema = z.object({
   id: z.string().uuid().or(z.literal("")).optional().default(""),
   colorName: z.string().trim().min(1, "Colour is required.").max(60),
