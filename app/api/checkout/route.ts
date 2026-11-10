@@ -204,9 +204,9 @@ export async function POST(request: Request) {
     payment.add(`Fulcrum order ${reference}`, amount, 1);
 
     const response =
-      method === "zimswitch"
-        ? await paynow.send(payment)
-        : await paynow.sendMobile(payment, mobilePhone ?? phone, method);
+      method === "ecocash"
+        ? await paynow.sendMobile(payment, mobilePhone ?? phone, method)
+        : await paynow.send(payment);
 
     if (!response || !response.success) {
       const reason = response?.error ?? "Paynow initiation failed";
@@ -260,7 +260,7 @@ export async function POST(request: Request) {
       });
     }
 
-    if (method === "zimswitch") {
+    if (method !== "ecocash") {
       if (!redirectUrl || !/^https?:\/\//i.test(redirectUrl)) {
         logPaymentEvent("checkout_missing_redirect", {
           userId: user.id,
@@ -302,9 +302,7 @@ export async function POST(request: Request) {
         innbucks: innbucksInfo,
         instructions:
           instructions ??
-          (method === "inbucks"
-            ? "Open the InnBucks app and enter your payment code to approve this order."
-            : "Approve the payment prompt on your phone to complete the order."),
+          "Approve the payment prompt on your phone to complete the order.",
       },
       { status: 201 },
     );

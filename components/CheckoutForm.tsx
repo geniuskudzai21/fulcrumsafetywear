@@ -50,7 +50,7 @@ const METHODS: {
   {
     value: "inbucks",
     title: "InnBucks",
-    detail: "Get an InnBucks payment code and approve it in the app.",
+    detail: "Continue to Paynow and choose InnBucks to complete payment.",
   },
   {
     value: "zimswitch",
@@ -130,9 +130,9 @@ export default function CheckoutForm() {
           address: String(formData.get("address") ?? ""),
           method,
           mobilePhone:
-            method === "zimswitch"
-              ? undefined
-              : String(formData.get("mobilePhone") ?? ""),
+            method === "ecocash"
+              ? String(formData.get("mobilePhone") ?? "")
+              : undefined,
         }),
       });
 
@@ -259,7 +259,9 @@ export default function CheckoutForm() {
             ) : (
               <>
                 <p className="whitespace-pre-line rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-                  {result.instructions}
+                  {result.method === "ecocash"
+                    ? "Check your phone for the EcoCash payment prompt and enter your PIN to approve the payment. This page checks the payment status automatically."
+                    : result.instructions}
                 </p>
                 <p className="text-xs text-coal/55">
                   {payment.loading
@@ -393,9 +395,9 @@ export default function CheckoutForm() {
               </div>
             </fieldset>
 
-            {method !== "zimswitch" ? (
+            {method === "ecocash" ? (
               <label className="block text-sm font-semibold">
-                {method === "ecocash" ? "EcoCash" : "InnBucks"} number
+                EcoCash number
                 <input
                   required
                   name="mobilePhone"
@@ -443,11 +445,9 @@ export default function CheckoutForm() {
             >
               {submitting
                 ? "Starting payment..."
-                : method === "zimswitch"
-                  ? "Continue to Paynow"
-                  : method === "inbucks"
-                    ? "Get InnBucks code"
-                    : "Send payment prompt"}
+                : method === "ecocash"
+                  ? "Send payment prompt"
+                  : "Continue to Paynow"}
             </button>
           </form>
         )}

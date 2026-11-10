@@ -81,7 +81,7 @@ export const checkoutSchema = z
     mobilePhone: optionalPhone,
   })
   .superRefine((data, context) => {
-    if (data.method !== "zimswitch" && !data.mobilePhone) {
+    if (data.method === "ecocash" && !data.mobilePhone) {
       context.addIssue({
         code: "custom",
         path: ["mobilePhone"],

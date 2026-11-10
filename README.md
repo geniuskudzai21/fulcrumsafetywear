@@ -193,9 +193,10 @@ A new integration starts in test mode, so no real money moves.
 
 5. For Zimswitch, the app redirects to Paynow. In test mode, choose
    **TESTING: Faked Success** and click **Make Payment**.
-6. InnBucks is not available in Paynow test mode. The checkout shows the
-   authorization code and deep link returned by Paynow, so verify it with one
-   live transaction after going live.
+6. InnBucks uses Paynow's hosted payment page rather than the mobile-money
+   prompt API. Select InnBucks on that page to complete payment. InnBucks may
+   not be available in Paynow test mode; confirm availability with Paynow or
+   test using the live integration.
 7. Watch the server logs and Supabase `payments`/`orders` tables to confirm the
    webhook and stock updates.
 
